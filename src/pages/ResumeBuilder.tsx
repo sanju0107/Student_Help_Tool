@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { motion, AnimatePresence } from 'motion/react';
-import { GoogleGenAI } from '@google/genai';
+import OpenAI from 'openai';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 
 interface ResumeData {
@@ -121,17 +121,23 @@ export default function ResumeBuilder() {
     setIsAiLoading('summary');
     setError(null);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       const prompt = `Write a 2-3 sentence professional resume summary for ${data.personal.name}. 
       Experience: ${data.experience.map(e => e.position).join(', ')}. 
       Skills: ${data.skills.join(', ')}. 
       Make it professional and impactful for a fresher or early career professional in India.`;
       
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: prompt
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
       });
-      updatePersonal('summary', response.text || '');
+      updatePersonal('summary', response.choices[0].message.content || '');
     } catch (err) {
       setError('Failed to generate summary. Please try again.');
       console.error(err);
@@ -148,7 +154,7 @@ export default function ResumeBuilder() {
     setIsAiLoading('coverLetter');
     setError(null);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       const prompt = `Write a professional cover letter based on this resume data:
       Name: ${data.personal.name}
       Experience: ${data.experience.map(e => `${e.position} at ${e.company}`).join(', ')}
@@ -156,11 +162,17 @@ export default function ResumeBuilder() {
       Skills: ${data.skills.join(', ')}
       Keep it professional, concise, and ready for a job application in India.`;
       
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: prompt
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
       });
-      setData({ ...data, coverLetter: response.text || '' });
+      setData({ ...data, coverLetter: response.choices[0].message.content || '' });
     } catch (err) {
       setError('Failed to generate cover letter. Please try again.');
       console.error(err);

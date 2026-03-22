@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, Send, Copy, Download, Loader2, FileText, Briefcase, User, Zap, CheckCircle2, Info } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
+import { AlertCircle } from 'lucide-react';
+import OpenAI from 'openai';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 
 export default function CoverLetterAI() {
@@ -32,7 +33,7 @@ export default function CoverLetterAI() {
     setError(null);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       const prompt = `Generate a professional cover letter for the following position:
         Job Title: ${formData.jobTitle}
         Company: ${formData.companyName}
@@ -43,12 +44,18 @@ export default function CoverLetterAI() {
         The cover letter should be professional, persuasive, and tailored to the job description. 
         Format it clearly with placeholders for personal contact information.`;
 
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: prompt,
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
       });
 
-      setCoverLetter(response.text);
+      setCoverLetter(response.choices[0].message.content || '');
     } catch (err) {
       setError('Failed to generate cover letter. Please try again.');
     } finally {
@@ -281,5 +288,3 @@ export default function CoverLetterAI() {
     </div>
   );
 }
-
-import { AlertCircle } from 'lucide-react';
