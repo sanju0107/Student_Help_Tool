@@ -119,7 +119,7 @@ export default function OCRTool() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Extract Text from Images | StudentToolBox</title>
+        <title>{title} - Extract Text from Images | CareerSuite</title>
         <meta name="description" content={description + " Free online OCR tool to extract text from images and screenshots. Fast, accurate, and completely free."} />
         <meta name="keywords" content="image to text, ocr online free, extract text from image, screenshot to text, online ocr tool, image to editable text" />
       </Helmet>

@@ -138,7 +138,7 @@ export default function SignatureResizer() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Signature Optimization | StudentToolBox</title>
+        <title>{title} - Signature Optimization | CareerSuite</title>
         <meta name="description" content={description + " Specialized tool for signatures. Crop, convert to high-contrast black & white, and compress to under 20KB."} />
         <meta name="keywords" content="signature resizer, crop signature, signature compressor, b&w signature, online signature tool" />
       </Helmet>

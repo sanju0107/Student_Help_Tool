@@ -15,7 +15,7 @@ export default function Layout() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
               <GraduationCap className="h-6 w-6" />
             </div>
-            <span className="hidden tracking-tight sm:inline">StudentToolBox</span>
+            <span className="hidden tracking-tight sm:inline">CareerSuite</span>
           </Link>
           
           <nav className="hidden md:flex items-center gap-8">
@@ -85,10 +85,10 @@ export default function Layout() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white shadow-md shadow-blue-600/20">
                   <GraduationCap className="h-5 w-5" />
                 </div>
-                <span>StudentToolBox</span>
+                <span>CareerSuite</span>
               </Link>
               <p className="text-sm leading-relaxed text-slate-500">
-                The ultimate professional toolkit for students and job seekers. Secure, private, and 100% free online tools.
+                The ultimate professional toolkit for students and job seekers. Secure, private, and 100% free online tools. Established in 2021.
               </p>
               <div className="flex gap-4">
                 <a href="#" className="rounded-full bg-slate-50 p-2 text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-all"><Twitter className="h-5 w-5" /></a>
@@ -113,23 +113,30 @@ export default function Layout() {
                 <li><Link to="/about" className="hover:text-blue-600">About Us</Link></li>
                 <li><Link to="/privacy" className="hover:text-blue-600">Privacy Policy</Link></li>
                 <li><Link to="/terms" className="hover:text-blue-600">Terms of Service</Link></li>
+                <li><Link to="/about" className="hover:text-blue-600">Help Center</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="mb-6 text-xs font-black uppercase tracking-widest text-slate-400">Security</h4>
-              <p className="text-sm leading-relaxed text-slate-500">
+              <h4 className="mb-6 text-xs font-black uppercase tracking-widest text-slate-400">Security & Status</h4>
+              <p className="text-sm leading-relaxed text-slate-500 mb-4">
                 All processing is done client-side. Your files never leave your computer.
               </p>
-              <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                Privacy Guaranteed
+              <div className="flex flex-col gap-2">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700">
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                  All Systems Operational
+                </div>
+                <div className="inline-flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700">
+                  <div className="h-1.5 w-1.5 rounded-full bg-blue-500"></div>
+                  Privacy Guaranteed
+                </div>
               </div>
             </div>
           </div>
           
           <div className="mt-16 border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
-            <div>© {new Date().getFullYear()} StudentToolBox</div>
+            <div>© 2021 - {new Date().getFullYear()} CareerSuite. All rights reserved.</div>
             <div className="flex gap-8">
               <Link to="/privacy" className="hover:text-slate-600">Privacy</Link>
               <Link to="/terms" className="hover:text-slate-600">Terms</Link>

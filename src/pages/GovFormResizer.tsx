@@ -115,7 +115,7 @@ export default function GovFormResizer() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - SSC, UPSC, Banking & Railway | StudentToolBox</title>
+        <title>{title} - SSC, UPSC, Banking & Railway | CareerSuite</title>
         <meta name="description" content={description + " One-click resize and compress photos for Indian government exam forms like SSC, UPSC, Banking, and Railway. Meets exact dimension and KB requirements."} />
         <meta name="keywords" content="ssc photo resizer, upsc photo resizer, ibps photo resizer, gov form image resizer, resize photo for ssc, compress signature for banking" />
       </Helmet>

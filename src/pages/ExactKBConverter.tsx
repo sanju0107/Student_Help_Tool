@@ -141,7 +141,7 @@ export default function ExactKBConverter() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Exact KB Image Compressor | StudentToolBox</title>
+        <title>{title} - Exact KB Image Compressor | CareerSuite</title>
         <meta name="description" content={description + " Resize images to 20KB, 50KB, or 100KB for SSC, Railway, Banking, and other government forms."} />
         <meta name="keywords" content="resize image to 20kb, compress image to 50kb, image to kb converter, ssc form photo resizer, online image compressor to exact size, photo size reducer" />
       </Helmet>

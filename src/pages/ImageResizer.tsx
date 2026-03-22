@@ -130,7 +130,7 @@ export default function ImageResizer() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Free Online Image Resizer | StudentToolBox</title>
+        <title>{title} - Free Online Image Resizer | CareerSuite</title>
         <meta name="description" content={description + " Resize images to specific dimensions online. Fast, secure, and free online tool for students."} />
         <meta name="keywords" content="image resizer, resize photo online, change image dimensions, free image editor, crop image online, photo size changer" />
       </Helmet>

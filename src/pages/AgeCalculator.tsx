@@ -112,7 +112,7 @@ export default function AgeCalculator() {
   return (
     <div className="min-h-screen bg-[#f8fafc] py-12">
       <Helmet>
-        <title>{tool.name} - Precise Age for Exam Forms | StudentToolBox</title>
+        <title>{tool.name} - Precise Age for Exam Forms | CareerSuite</title>
         <meta name="description" content={tool.longDescription} />
         <meta name="keywords" content="age calculator, exam age calculator, upsc age limit, ssc age calculator, date of birth calculator, age in days, age in weeks" />
       </Helmet>

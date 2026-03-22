@@ -124,7 +124,7 @@ export default function SplitPDF() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Extract Pages from PDF Online | StudentToolBox</title>
+        <title>{title} - Extract Pages from PDF Online | CareerSuite</title>
         <meta name="description" content={description + " Extract specific pages from your PDF documents for free. Simple, secure, and fast PDF splitting tool."} />
         <meta name="keywords" content="split pdf, extract pdf pages, online pdf splitter, free pdf tool, separate pdf" />
       </Helmet>

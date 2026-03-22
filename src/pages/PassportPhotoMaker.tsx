@@ -143,7 +143,7 @@ export default function PassportPhotoMaker() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Free Online Passport Photo Maker | StudentToolBox</title>
+        <title>{title} - Free Online Passport Photo Maker | CareerSuite</title>
         <meta name="description" content={description + " Create standard 3.5 x 4.5 cm passport size photos for Indian government applications. Fast, secure, and free online tool for students."} />
         <meta name="keywords" content="passport photo maker, 3.5 x 4.5 cm photo, passport size photo online, ssc photo maker, upsc photo resizer, online passport photo crop" />
       </Helmet>

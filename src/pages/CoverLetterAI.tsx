@@ -79,7 +79,7 @@ export default function CoverLetterAI() {
   return (
     <div className="container mx-auto px-4 py-12">
       <Helmet>
-        <title>AI Cover Letter Generator - Professional & Tailored | StudentToolBox</title>
+        <title>AI Cover Letter Generator - Professional & Tailored | CareerSuite</title>
         <meta name="description" content="Generate professional, job-winning cover letters tailored to your target role in seconds with AI. Stand out to recruiters effortlessly with high-quality content." />
         <meta name="keywords" content="ai cover letter generator, professional cover letter, job application letter, tailored cover letter, free ai writing tool" />
       </Helmet>

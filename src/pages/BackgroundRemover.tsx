@@ -118,7 +118,7 @@ export default function BackgroundRemover() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - AI Background Remover | StudentToolBox</title>
+        <title>{title} - AI Background Remover | CareerSuite</title>
         <meta name="description" content={description + " Remove background from images online for free using AI. Create transparent PNGs instantly with high precision."} />
         <meta name="keywords" content="remove background, bg remover, transparent background, ai background removal, free online bg remover, image background eraser" />
       </Helmet>

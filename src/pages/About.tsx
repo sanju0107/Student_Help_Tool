@@ -7,8 +7,8 @@ export default function About() {
   return (
     <div className="min-h-screen bg-slate-50 py-12">
       <Helmet>
-        <title>About Us - StudentToolBox | Our Mission & Values</title>
-        <meta name="description" content="Learn about StudentToolBox, our mission to provide free, secure, and professional tools for students and job seekers worldwide." />
+        <title>About Us - CareerSuite | Our Mission & Values</title>
+        <meta name="description" content="Learn about CareerSuite, our mission to provide free, secure, and professional tools for students and job seekers worldwide." />
       </Helmet>
 
       <div className="container mx-auto px-4">
@@ -26,7 +26,7 @@ export default function About() {
               Empowering <span className="text-blue-600">Careers</span> Through Technology.
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-slate-600 sm:text-xl">
-              StudentToolBox was built with a simple goal: to provide high-performance, professional-grade tools to every student and job seeker, completely free of charge.
+              CareerSuite was established in 2021 with a simple goal: to provide high-performance, professional-grade tools to every student and job seeker, completely free of charge.
             </p>
           </div>
 
@@ -76,7 +76,7 @@ export default function About() {
               <Globe className="mx-auto mb-6 h-12 w-12 opacity-50" />
               <h2 className="mb-6 text-3xl font-bold">Our Story</h2>
               <p className="mb-8 text-lg text-blue-100 leading-relaxed">
-                Started as a small project to help friends resize photos for Indian government exams, StudentToolBox has grown into a comprehensive platform used by thousands. We understand the frustration of rejected forms and complex PDF requirements, and we're here to solve them with one-click solutions.
+                Started as a small project to help friends resize photos for Indian government exams, CareerSuite has grown into a comprehensive platform used by thousands. We understand the frustration of rejected forms and complex PDF requirements, and we're here to solve them with one-click solutions.
               </p>
               <div className="flex justify-center gap-4">
                 <div className="text-center">

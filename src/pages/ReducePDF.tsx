@@ -67,7 +67,7 @@ export default function ReducePDF() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Compress PDF Online Free | StudentToolBox</title>
+        <title>{title} - Compress PDF Online Free | CareerSuite</title>
         <meta name="description" content={description + " Compress your PDF documents for free. Reduce file size for email attachments and uploads while maintaining quality."} />
         <meta name="keywords" content="compress pdf, reduce pdf size, online pdf compressor, free pdf tool, shrink pdf file" />
       </Helmet>

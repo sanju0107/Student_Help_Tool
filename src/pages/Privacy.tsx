@@ -8,7 +8,7 @@ export default function Privacy() {
   return (
     <div className="min-h-screen bg-slate-50 py-12">
       <Helmet>
-        <title>Privacy Policy - StudentToolBox | Your Data is Secure</title>
+        <title>Privacy Policy - CareerSuite | Your Data is Secure</title>
         <meta name="description" content="Read our privacy policy. We prioritize your data privacy with client-side processing for all image and PDF tools." />
       </Helmet>
 
@@ -30,7 +30,7 @@ export default function Privacy() {
                 <h2 className="text-xl font-bold">Our Core Privacy Principle</h2>
               </div>
               <p className="text-blue-900 leading-relaxed font-medium">
-                StudentToolBox is designed with a "Privacy-First" architecture. 100% of the image and PDF processing (compression, resizing, merging, etc.) happens directly in your web browser. Your sensitive documents and photos are never uploaded to our servers.
+                CareerSuite is designed with a "Privacy-First" architecture. 100% of the image and PDF processing (compression, resizing, merging, etc.) happens directly in your web browser. Your sensitive documents and photos are never uploaded to our servers.
               </p>
             </section>
 
@@ -90,7 +90,7 @@ export default function Privacy() {
                 If you have any questions about this Privacy Policy or our data practices, please contact us at:
               </p>
               <div className="mt-4 font-bold text-blue-600">
-                privacy@studenttoolbox.com
+                privacy@careersuite.com
               </div>
             </section>
           </div>

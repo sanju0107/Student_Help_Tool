@@ -127,7 +127,7 @@ export default function MergePDF() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Free Online PDF Merger | StudentToolBox</title>
+        <title>{title} - Free Online PDF Merger | CareerSuite</title>
         <meta name="description" content={description + " Combine multiple PDF files into one document online for free. Fast, secure, and free online tool for students."} />
         <meta name="keywords" content="merge pdf, combine pdf online, pdf joiner, free pdf merger, ssc form pdf merge, online document joiner" />
       </Helmet>

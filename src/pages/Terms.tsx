@@ -8,8 +8,8 @@ export default function Terms() {
   return (
     <div className="min-h-screen bg-slate-50 py-12">
       <Helmet>
-        <title>Terms of Service - StudentToolBox | User Agreement</title>
-        <meta name="description" content="Read our terms of service. Understand your rights and responsibilities when using StudentToolBox's free tools." />
+        <title>Terms of Service - CareerSuite | User Agreement</title>
+        <meta name="description" content="Read our terms of service. Understand your rights and responsibilities when using CareerSuite's free tools." />
       </Helmet>
 
       <div className="container mx-auto px-4">
@@ -30,7 +30,7 @@ export default function Terms() {
                 <h2 className="text-2xl font-bold">Acceptance of Terms</h2>
               </div>
               <p className="text-slate-600 leading-relaxed">
-                By accessing or using StudentToolBox, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.
+                By accessing or using CareerSuite, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.
               </p>
             </section>
 
@@ -41,7 +41,7 @@ export default function Terms() {
                 <h2 className="text-2xl font-bold">Description of Service</h2>
               </div>
               <p className="text-slate-600 leading-relaxed">
-                StudentToolBox provides a variety of free online tools for image processing, PDF manipulation, student calculations, and AI-powered content generation. We reserve the right to modify or discontinue any part of the service at any time without notice.
+                CareerSuite provides a variety of free online tools for image processing, PDF manipulation, student calculations, and AI-powered content generation. We reserve the right to modify or discontinue any part of the service at any time without notice.
               </p>
             </section>
 
@@ -65,7 +65,7 @@ export default function Terms() {
                 <h2 className="text-xl font-bold">Disclaimer of Warranties</h2>
               </div>
               <p className="text-amber-900 leading-relaxed font-medium">
-                StudentToolBox is provided "as is" and "as available" without any warranties of any kind. We do not guarantee that the tools will be error-free or that the results will meet your specific requirements. Use of our tools is at your own risk.
+                CareerSuite is provided "as is" and "as available" without any warranties of any kind. We do not guarantee that the tools will be error-free or that the results will meet your specific requirements. Use of our tools is at your own risk.
               </p>
             </section>
 
@@ -76,7 +76,7 @@ export default function Terms() {
                 <h2 className="text-2xl font-bold">Limitation of Liability</h2>
               </div>
               <p className="text-slate-600 leading-relaxed">
-                In no event shall StudentToolBox or its creators be liable for any indirect, incidental, special, or consequential damages arising out of or in connection with your use of our services.
+                In no event shall CareerSuite or its creators be liable for any indirect, incidental, special, or consequential damages arising out of or in connection with your use of our services.
               </p>
             </section>
 
@@ -90,7 +90,7 @@ export default function Terms() {
                 If you have any questions about these Terms of Service, please contact us at:
               </p>
               <div className="mt-4 font-bold text-blue-600">
-                terms@studenttoolbox.com
+                terms@careersuite.com
               </div>
             </section>
           </div>

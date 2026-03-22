@@ -102,7 +102,7 @@ export default function ImageCompressor() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Free Online Image Compression | StudentToolBox</title>
+        <title>{title} - Free Online Image Compression | CareerSuite</title>
         <meta name="description" content={description + " Compress images without losing quality. Fast, secure, and free online tool for students."} />
         <meta name="keywords" content="image compressor, reduce image size, online image compression, free photo compressor, kb reducer, optimize images for web" />
       </Helmet>

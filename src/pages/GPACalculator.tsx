@@ -81,7 +81,7 @@ export default function GPACalculator() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Calculate CGPA & Percentage Online | StudentToolBox</title>
+        <title>{title} - Calculate CGPA & Percentage Online | CareerSuite</title>
         <meta name="description" content={description + " Standard 10-point scale GPA calculator with percentage conversion for Indian universities. Free, fast, and accurate."} />
         <meta name="keywords" content="gpa calculator, cgpa to percentage, semester gpa, academic calculator, student gpa tool" />
       </Helmet>

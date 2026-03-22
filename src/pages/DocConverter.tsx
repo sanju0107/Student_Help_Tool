@@ -115,7 +115,7 @@ export default function DocConverter() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Convert PDF to Word Online Free | StudentToolBox</title>
+        <title>{title} - Convert PDF to Word Online Free | CareerSuite</title>
         <meta name="description" content={description + " Transform your PDF documents into editable Word files while preserving layout and formatting."} />
         <meta name="keywords" content="pdf to word, convert pdf to docx, free pdf to word converter, online document converter, pdf to editable word" />
       </Helmet>

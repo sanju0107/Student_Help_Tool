@@ -602,7 +602,7 @@ export default function ResumeBuilder() {
   return (
     <div className="container mx-auto px-4 py-12">
       <Helmet>
-        <title>Free Resume Builder for Freshers in India - AI Powered CV Maker | StudentToolBox</title>
+        <title>Free Resume Builder for Freshers in India - AI Powered CV Maker | CareerSuite</title>
         <meta name="description" content="Create a professional resume and cover letter in minutes with our AI-powered builder. Perfect for freshers and students in India. ATS-friendly templates and instant PDF download." />
         <meta name="keywords" content="resume builder for freshers, free cv maker india, ai resume generator, professional cover letter builder, ssc resume maker, upsc cv maker" />
       </Helmet>

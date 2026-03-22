@@ -3,12 +3,31 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Loader2 } from 'lucide-react';
 import Layout from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
+
+// Scroll to top on route change
+function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+
+  useEffect(() => {
+    if (!hash) {
+      window.scrollTo(0, 0);
+    } else {
+      const id = hash.replace('#', '');
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [pathname, hash]);
+
+  return null;
+}
 
 // Lazy load pages
 const Home = lazy(() => import('./pages/Home'));
@@ -31,6 +50,7 @@ const CoverLetterAI = lazy(() => import('./pages/CoverLetterAI'));
 const About = lazy(() => import('./pages/About'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 import { TOOLS } from './constants';
 
@@ -128,10 +148,14 @@ export default function App() {
             <Route path="/about" element={<About />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
+
+            {/* 404 */}
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
       </Suspense>
     </ErrorBoundary>
+    <ScrollToTop />
   </Router>
 </HelmetProvider>
   );
