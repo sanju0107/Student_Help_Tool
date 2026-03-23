@@ -47,7 +47,7 @@ export default function Privacy() {
                 <ul className="list-disc pl-6 space-y-2">
                   <li><strong>Usage Data:</strong> We collect anonymous usage statistics (e.g., which tools are most popular) to improve our services.</li>
                   <li><strong>Cookies:</strong> We use essential cookies to maintain your session and preferences.</li>
-                  <li><strong>AI Tools:</strong> When using AI-powered tools (Resume/Cover Letter), the text you provide is processed by OpenAI's GPT API to generate results.</li>
+                  <li><strong>AI Tools:</strong> When using AI-powered tools (Resume/Cover Letter), the text you provide is processed by Google's Gemini API to generate results.</li>
                 </ul>
               </div>
             </section>
@@ -76,7 +76,7 @@ export default function Privacy() {
                 <h2 className="text-2xl font-bold">Third-Party Services</h2>
               </div>
               <p className="text-slate-600 leading-relaxed">
-                We use Google Analytics for anonymous traffic analysis and OpenAI's GPT API for our AI features. These services have their own privacy policies which we encourage you to review.
+                We use Google Analytics for anonymous traffic analysis and Google Gemini API for our AI features. These services have their own privacy policies which we encourage you to review.
               </p>
             </section>
 

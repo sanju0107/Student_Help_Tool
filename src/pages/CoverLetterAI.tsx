@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, Send, Copy, Download, Loader2, FileText, Briefcase, User, Zap, CheckCircle2, Info } from 'lucide-react';
-import { AlertCircle } from 'lucide-react';
+import { Sparkles, Send, Copy, Download, Loader2, FileText, Briefcase, User, Zap, CheckCircle2, Info, AlertCircle } from 'lucide-react';
 import OpenAI from 'openai';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 import { trackAiFeature, trackToolUsage } from '../lib/analytics';
