@@ -5,6 +5,7 @@ import { Sparkles, Send, Copy, Download, Loader2, FileText, Briefcase, User, Zap
 import { AlertCircle } from 'lucide-react';
 import OpenAI from 'openai';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
+import { trackAiFeature, trackToolUsage } from '../lib/analytics';
 
 export default function CoverLetterAI() {
   const [formData, setFormData] = useState({
@@ -56,8 +57,10 @@ export default function CoverLetterAI() {
       });
 
       setCoverLetter(response.choices[0].message.content || '');
+      trackAiFeature('cover_letter_generation', true);
     } catch (err) {
       setError('Failed to generate cover letter. Please try again.');
+      trackAiFeature('cover_letter_generation', false);
     } finally {
       setIsGenerating(false);
     }
@@ -67,6 +70,7 @@ export default function CoverLetterAI() {
     if (coverLetter) {
       navigator.clipboard.writeText(coverLetter);
       setCopied(true);
+      trackToolUsage('cover_letter_generator', 'copy');
       setTimeout(() => setCopied(false), 2000);
     }
   };
@@ -81,6 +85,7 @@ export default function CoverLetterAI() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    trackToolUsage('cover_letter_generator', 'download');
   };
 
   return (

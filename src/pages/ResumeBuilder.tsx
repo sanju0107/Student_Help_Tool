@@ -25,6 +25,7 @@ import { jsPDF } from 'jspdf';
 import { motion, AnimatePresence } from 'motion/react';
 import OpenAI from 'openai';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
+import { trackAiFeature, trackToolUsage } from '../lib/analytics';
 
 interface ResumeData {
   personal: {
@@ -138,8 +139,10 @@ export default function ResumeBuilder() {
         temperature: 0.7,
       });
       updatePersonal('summary', response.choices[0].message.content || '');
+      trackAiFeature('resume_summary_generation', true);
     } catch (err) {
       setError('Failed to generate summary. Please try again.');
+      trackAiFeature('resume_summary_generation', false);
       console.error(err);
     } finally {
       setIsAiLoading(null);
@@ -173,8 +176,10 @@ export default function ResumeBuilder() {
         temperature: 0.7,
       });
       setData({ ...data, coverLetter: response.choices[0].message.content || '' });
+      trackAiFeature('resume_cover_letter_generation', true);
     } catch (err) {
       setError('Failed to generate cover letter. Please try again.');
+      trackAiFeature('resume_cover_letter_generation', false);
       console.error(err);
     } finally {
       setIsAiLoading(null);
@@ -292,6 +297,7 @@ export default function ResumeBuilder() {
 
       const fileName = (data.personal.name || 'resume').replace(/\s+/g, '-');
       doc.save(`${fileName}.pdf`);
+      trackToolUsage('resume_builder', 'download_resume_pdf');
     } catch (err) {
       setError('Failed to generate PDF. Please try again.');
       console.error(err);
@@ -311,6 +317,7 @@ export default function ResumeBuilder() {
       doc.text(splitText, margin, y);
       const fileName = (data.personal.name || 'letter').replace(/\s+/g, '-');
       doc.save(`cover-letter-${fileName}.pdf`);
+      trackToolUsage('resume_builder', 'download_cover_letter_pdf');
     } catch (err) {
       setError('Failed to generate Cover Letter PDF.');
       console.error(err);
