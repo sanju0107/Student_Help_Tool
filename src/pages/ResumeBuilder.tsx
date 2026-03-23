@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { motion, AnimatePresence } from 'motion/react';
-import { GoogleGenAI } from '@google/genai';
+import OpenAI from 'openai';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 import { trackAiFeature, trackToolUsage } from '../lib/analytics';
 
@@ -122,26 +122,39 @@ export default function ResumeBuilder() {
     setIsAiLoading('summary');
     setError(null);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+      // Check if API key is set
+      if (!process.env.OPENAI_API_KEY) {
+        setError('OpenAI API key is not configured. Please set OPENAI_API_KEY in environment variables.');
+        setIsAiLoading(null);
+        return;
+      }
+
+      const openai = new OpenAI({ 
+        apiKey: process.env.OPENAI_API_KEY,
+        dangerouslyAllowBrowser: true // Required for client-side usage
+      });
       const prompt = `Write a 2-3 sentence professional resume summary for ${data.personal.name}. 
       Experience: ${data.experience.map(e => e.position).join(', ')}. 
       Skills: ${data.skills.join(', ')}. 
       Make it professional and impactful for a fresher or early career professional in India.`;
       
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: prompt
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
       });
-<<<<<<< HEAD
       updatePersonal('summary', response.choices[0].message.content || '');
       trackAiFeature('resume_summary_generation', true);
-=======
-      updatePersonal('summary', response.text || '');
->>>>>>> f83ee6197b530717cb8e026b076be763f6fcc8c5
-    } catch (err) {
-      setError('Failed to generate summary. Please try again.');
+    } catch (err: any) {
+      console.error('Summary generation error:', err);
+      const errorMessage = err?.message || 'Failed to generate summary. Please try again.';
+      setError(errorMessage);
       trackAiFeature('resume_summary_generation', false);
-      console.error(err);
     } finally {
       setIsAiLoading(null);
     }
@@ -155,7 +168,17 @@ export default function ResumeBuilder() {
     setIsAiLoading('coverLetter');
     setError(null);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+      // Check if API key is set
+      if (!process.env.OPENAI_API_KEY) {
+        setError('OpenAI API key is not configured. Please set OPENAI_API_KEY in environment variables.');
+        setIsAiLoading(null);
+        return;
+      }
+
+      const openai = new OpenAI({ 
+        apiKey: process.env.OPENAI_API_KEY,
+        dangerouslyAllowBrowser: true // Required for client-side usage
+      });
       const prompt = `Write a professional cover letter based on this resume data:
       Name: ${data.personal.name}
       Experience: ${data.experience.map(e => `${e.position} at ${e.company}`).join(', ')}
@@ -163,20 +186,23 @@ export default function ResumeBuilder() {
       Skills: ${data.skills.join(', ')}
       Keep it professional, concise, and ready for a job application in India.`;
       
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: prompt
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
       });
-<<<<<<< HEAD
       setData({ ...data, coverLetter: response.choices[0].message.content || '' });
       trackAiFeature('resume_cover_letter_generation', true);
-=======
-      setData({ ...data, coverLetter: response.text || '' });
->>>>>>> f83ee6197b530717cb8e026b076be763f6fcc8c5
-    } catch (err) {
-      setError('Failed to generate cover letter. Please try again.');
+    } catch (err: any) {
+      console.error('Cover letter generation error:', err);
+      const errorMessage = err?.message || 'Failed to generate cover letter. Please try again.';
+      setError(errorMessage);
       trackAiFeature('resume_cover_letter_generation', false);
-      console.error(err);
     } finally {
       setIsAiLoading(null);
     }
@@ -293,7 +319,6 @@ export default function ResumeBuilder() {
 
       const fileName = (data.personal.name || 'resume').replace(/\s+/g, '-');
       doc.save(`${fileName}.pdf`);
-      trackToolUsage('resume_builder', 'download_resume_pdf');
     } catch (err) {
       setError('Failed to generate PDF. Please try again.');
       console.error(err);
@@ -313,7 +338,6 @@ export default function ResumeBuilder() {
       doc.text(splitText, margin, y);
       const fileName = (data.personal.name || 'letter').replace(/\s+/g, '-');
       doc.save(`cover-letter-${fileName}.pdf`);
-      trackToolUsage('resume_builder', 'download_cover_letter_pdf');
     } catch (err) {
       setError('Failed to generate Cover Letter PDF.');
       console.error(err);

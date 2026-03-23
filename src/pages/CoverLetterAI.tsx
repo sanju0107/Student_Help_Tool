@@ -33,7 +33,19 @@ export default function CoverLetterAI() {
     setError(null);
 
     try {
-      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      // Check if API key is set
+      if (!process.env.OPENAI_API_KEY) {
+        setError('OpenAI API key is not configured. Please set OPENAI_API_KEY in environment variables.');
+        trackAiFeature('cover_letter_generation', false);
+        setIsGenerating(false);
+        return;
+      }
+
+      const openai = new OpenAI({ 
+        apiKey: process.env.OPENAI_API_KEY,
+        dangerouslyAllowBrowser: true // Required for client-side usage
+      });
+      
       const prompt = `Generate a professional cover letter for the following position:
         Job Title: ${formData.jobTitle}
         Company: ${formData.companyName}
@@ -57,8 +69,10 @@ export default function CoverLetterAI() {
 
       setCoverLetter(response.choices[0].message.content || '');
       trackAiFeature('cover_letter_generation', true);
-    } catch (err) {
-      setError('Failed to generate cover letter. Please try again.');
+    } catch (err: any) {
+      console.error('Cover letter generation error:', err);
+      const errorMessage = err?.message || 'Failed to generate cover letter. Please try again.';
+      setError(errorMessage);
       trackAiFeature('cover_letter_generation', false);
     } finally {
       setIsGenerating(false);
