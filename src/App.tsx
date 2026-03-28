@@ -9,7 +9,6 @@ import { HelmetProvider } from 'react-helmet-async';
 import { Loader2 } from 'lucide-react';
 import Layout from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { trackPageView } from './lib/analytics';
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -26,11 +25,6 @@ function ScrollToTop() {
       }
     }
   }, [pathname, hash]);
-
-  // Track page views
-  useEffect(() => {
-    trackPageView(pathname, document.title);
-  }, [pathname]);
 
   return null;
 }

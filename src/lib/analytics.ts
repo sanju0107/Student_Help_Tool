@@ -1,58 +1,69 @@
 /**
- * Google Analytics helper functions
- * Uses the gtag global object injected via index.html
+ * Analytics tracking functions for the Student Help Tool
+ * Tracks AI features and tool usage for analytics purposes
  */
-
-// Type declaration for gtag
-declare let gtag: Function;
 
 /**
- * Track a page view event
- * @param path - The page path
- * @param title - The page title
+ * Track AI feature usage
+ * @param featureName - Name of the AI feature being tracked
+ * @param success - Whether the feature execution was successful
  */
-export const trackPageView = (path: string, title: string) => {
-  if (typeof window !== 'undefined' && typeof gtag !== 'undefined') {
-    gtag('config', 'G-VKC0SEVP7T', {
-      page_path: path,
-      page_title: title,
-    });
-  }
-};
-
-/**
- * Track a custom event
- * @param eventName - The event name
- * @param eventData - Optional event data
- */
-export const trackEvent = (eventName: string, eventData?: Record<string, any>) => {
-  if (typeof window !== 'undefined' && typeof gtag !== 'undefined') {
-    gtag('event', eventName, eventData || {});
+export const trackAiFeature = (featureName: string, success: boolean): void => {
+  try {
+    const timestamp = new Date().toISOString();
+    const analyticsData = {
+      type: 'ai_feature',
+      feature: featureName,
+      success,
+      timestamp,
+      userAgent: navigator.userAgent,
+    };
+    
+    // Log to console in development
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[Analytics]', analyticsData);
+    }
+    
+    // Send to analytics service if available
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', featureName, {
+        'success': success,
+      });
+    }
+  } catch (error) {
+    console.error('Error tracking AI feature:', error);
   }
 };
 
 /**
  * Track tool usage
- * @param toolName - Name of the tool used
- * @param action - Action performed (e.g., 'generate', 'download')
+ * @param toolName - Name of the tool being used
+ * @param action - Action performed on the tool (e.g., 'download', 'copy', 'generate')
  */
-export const trackToolUsage = (toolName: string, action: string) => {
-  trackEvent('tool_usage', {
-    tool_name: toolName,
-    action: action,
-    timestamp: new Date().toISOString(),
-  });
-};
-
-/**
- * Track AI feature usage
- * @param featureName - Name of the AI feature
- * @param success - Whether the action was successful
- */
-export const trackAiFeature = (featureName: string, success: boolean) => {
-  trackEvent('ai_feature_usage', {
-    feature_name: featureName,
-    success: success,
-    timestamp: new Date().toISOString(),
-  });
+export const trackToolUsage = (toolName: string, action: string): void => {
+  try {
+    const timestamp = new Date().toISOString();
+    const analyticsData = {
+      type: 'tool_usage',
+      tool: toolName,
+      action,
+      timestamp,
+      userAgent: navigator.userAgent,
+    };
+    
+    // Log to console in development
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[Analytics]', analyticsData);
+    }
+    
+    // Send to analytics service if available
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', `${toolName}_${action}`, {
+        'tool': toolName,
+        'action': action,
+      });
+    }
+  } catch (error) {
+    console.error('Error tracking tool usage:', error);
+  }
 };

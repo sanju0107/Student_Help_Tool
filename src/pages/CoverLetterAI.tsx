@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, Send, Copy, Download, Loader2, FileText, Briefcase, User, Zap, CheckCircle2, Info, AlertCircle } from 'lucide-react';
+import { Sparkles, Copy, Download, Loader2, FileText, AlertCircle, CheckCircle2 } from 'lucide-react';
 import OpenAI from 'openai';
-import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
+import { ToolHeader, ToolCard } from '../components/ToolUI';
 import { trackAiFeature, trackToolUsage } from '../lib/analytics';
 
 export default function CoverLetterAI() {
   const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
     jobTitle: '',
     companyName: '',
     jobDescription: '',
@@ -24,8 +30,8 @@ export default function CoverLetterAI() {
   };
 
   const generateCoverLetter = async () => {
-    if (!formData.jobTitle || !formData.companyName) {
-      setError('Please provide at least job title and company name.');
+    if (!formData.jobTitle || !formData.companyName || !formData.fullName || !formData.email) {
+      setError('Please fill in all required fields: Full Name, Email, Job Title, and Company Name.');
       return;
     }
 
@@ -33,7 +39,6 @@ export default function CoverLetterAI() {
     setError(null);
 
     try {
-      // Check if API key is set
       if (!process.env.OPENAI_API_KEY) {
         setError('OpenAI API key is not configured. Please set OPENAI_API_KEY in environment variables.');
         trackAiFeature('cover_letter_generation', false);
@@ -43,27 +48,48 @@ export default function CoverLetterAI() {
 
       const openai = new OpenAI({ 
         apiKey: process.env.OPENAI_API_KEY,
-        dangerouslyAllowBrowser: true // Required for client-side usage
+        dangerouslyAllowBrowser: true
       });
       
-      const prompt = `Generate a professional cover letter for the following position:
-        Job Title: ${formData.jobTitle}
-        Company: ${formData.companyName}
-        Job Description: ${formData.jobDescription}
-        Years of Experience: ${formData.experience}
-        Key Skills: ${formData.skills}
-        
-        The cover letter should be professional, persuasive, and tailored to the job description. 
-        Format it clearly with placeholders for personal contact information.`;
+      const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      const applicantAddress = `${formData.address}\n${formData.city}, ${formData.state} ${formData.zipCode}`.trim();
+
+      const prompt = `Generate a professional, concise cover letter with these EXACT details:
+
+LETTER HEADER (use EXACTLY as provided):
+Name: ${formData.fullName}
+Address: ${applicantAddress || '[Your Address]'}
+Email: ${formData.email}
+Date: ${today}
+
+HIRING MANAGER:
+Company: ${formData.companyName}
+
+JOB DETAILS:
+Job Title: ${formData.jobTitle}
+Experience: ${formData.experience || 'Not specified'}
+Skills: ${formData.skills || 'Not specified'}
+Job Description: ${formData.jobDescription || 'Not provided'}
+
+FORMAT & REQUIREMENTS:
+1. Start with applicant's full name on first line
+2. Followed by complete address (street, city, state zip) on next lines
+3. Then email and date
+4. Leave blank line then write 'Hiring Manager' and company name
+5. Professional business letter format
+6. Opening paragraph with specific interest in the role
+7. 2-3 body paragraphs highlighting relevant skills and experience matched to job
+8. Closing paragraph with call to action
+9. Professional sign off with full name
+10. Total length: 200-300 words
+11. CRITICAL: NO placeholder text like [Your Name], [Your Address], etc.
+12. Use ACTUAL provided information everywhere
+13. Ready to send immediately to the company
+14. Professional and human-like tone`;
 
       const response = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
+        messages: [{ role: 'user', content: prompt }],
         temperature: 0.7,
       });
 
@@ -102,144 +128,203 @@ export default function CoverLetterAI() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto px-4 py-8">
       <Helmet>
         <title>AI Cover Letter Generator - Professional & Tailored | CareerSuite</title>
-        <meta name="description" content="Generate professional, job-winning cover letters tailored to your target role in seconds with AI. Stand out to recruiters effortlessly with high-quality content." />
-        <meta name="keywords" content="ai cover letter generator, professional cover letter, job application letter, tailored cover letter, free ai writing tool" />
+        <meta name="description" content="Generate professional, job-winning cover letters tailored to your target role in seconds with AI." />
+        <meta name="keywords" content="ai cover letter generator, professional cover letter, job application letter" />
       </Helmet>
 
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
         <ToolHeader 
           title="AI Cover Letter Generator"
-          description="Create professional, job-winning cover letters tailored to your target role in seconds using advanced AI."
+          description="Create professional cover letters tailored to your target role in seconds."
           icon={Sparkles}
         />
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {/* Input Section */}
-          <div className="space-y-6">
-            <ToolCard>
-              <h2 className="mb-6 text-xl font-bold text-slate-900 flex items-center gap-2">
-                <Briefcase className="h-5 w-5 text-blue-600" />
-                Job Details
-              </h2>
-              <div className="space-y-4">
+          {/* Form Section */}
+          <div>
+            <ToolCard className="space-y-6">
+              <h2 className="text-lg font-bold text-slate-900">Your Details</h2>
+              
+              {/* Full Name */}
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">Full Name *</label>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  placeholder="John Doe"
+                  className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none transition-colors"
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">Email Address *</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="john@example.com"
+                  className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none transition-colors"
+                />
+              </div>
+
+              {/* Address */}
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">Street Address</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  placeholder="123 Main Street"
+                  className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none transition-colors"
+                />
+              </div>
+
+              {/* City, State, Zip */}
+              <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="mb-2 block text-sm font-bold text-slate-700 uppercase tracking-wider">Job Title</label>
-                  <div className="relative">
-                    <Briefcase className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
-                    <input
-                      type="text"
-                      name="jobTitle"
-                      value={formData.jobTitle}
-                      onChange={handleInputChange}
-                      placeholder="e.g. Software Engineer"
-                      className="w-full rounded-xl border-2 border-slate-100 pl-12 pr-4 py-3 focus:border-blue-500 focus:outline-none transition-colors"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-bold text-slate-700 uppercase tracking-wider">Company Name</label>
-                  <div className="relative">
-                    <Briefcase className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
-                    <input
-                      type="text"
-                      name="companyName"
-                      value={formData.companyName}
-                      onChange={handleInputChange}
-                      placeholder="e.g. Google"
-                      className="w-full rounded-xl border-2 border-slate-100 pl-12 pr-4 py-3 focus:border-blue-500 focus:outline-none transition-colors"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-slate-700 uppercase tracking-wider">Experience</label>
-                    <div className="relative">
-                      <User className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
-                      <input
-                        type="text"
-                        name="experience"
-                        value={formData.experience}
-                        onChange={handleInputChange}
-                        placeholder="e.g. 2 years"
-                        className="w-full rounded-xl border-2 border-slate-100 pl-12 pr-4 py-3 focus:border-blue-500 focus:outline-none transition-colors"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-slate-700 uppercase tracking-wider">Key Skills</label>
-                    <input
-                      type="text"
-                      name="skills"
-                      value={formData.skills}
-                      onChange={handleInputChange}
-                      placeholder="e.g. React, Node.js"
-                      className="w-full rounded-xl border-2 border-slate-100 px-4 py-3 focus:border-blue-500 focus:outline-none transition-colors"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-bold text-slate-700 uppercase tracking-wider">Job Description (Optional)</label>
-                  <textarea
-                    name="jobDescription"
-                    value={formData.jobDescription}
+                  <label className="mb-2 block text-sm font-semibold text-slate-700">City</label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
                     onChange={handleInputChange}
-                    rows={4}
-                    placeholder="Paste the job description here for better tailoring..."
-                    className="w-full rounded-xl border-2 border-slate-100 px-4 py-3 focus:border-blue-500 focus:outline-none transition-colors resize-none"
+                    placeholder="New York"
+                    className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none transition-colors"
                   />
                 </div>
-
-                {error && (
-                  <div className="flex items-center gap-3 rounded-xl bg-red-50 p-4 text-sm text-red-600 border border-red-100">
-                    <AlertCircle className="h-5 w-5 shrink-0" />
-                    <p className="font-bold">{error}</p>
-                  </div>
-                )}
-
-                <button
-                  onClick={generateCoverLetter}
-                  disabled={isGenerating}
-                  className="btn-primary w-full py-4 flex items-center justify-center gap-2"
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      Generating with AI...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-5 w-5" />
-                      Generate Cover Letter
-                    </>
-                  )}
-                </button>
-              </div>
-            </ToolCard>
-
-            <ToolCard className="prose prose-slate max-w-none">
-              <div className="flex items-start gap-3">
-                <Info className="mt-1 h-5 w-5 text-blue-600 shrink-0" />
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">Pro Tip</h3>
-                  <p className="text-slate-600 leading-relaxed text-sm">
-                    The more details you provide in the job description, the better the AI can tailor your cover letter to specific requirements. 
-                    Mentioning specific projects or achievements in your skills section also helps create a more persuasive letter.
-                  </p>
+                  <label className="mb-2 block text-sm font-semibold text-slate-700">State</label>
+                  <input
+                    type="text"
+                    name="state"
+                    value={formData.state}
+                    onChange={handleInputChange}
+                    placeholder="NY"
+                    className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-slate-700">Zip Code</label>
+                  <input
+                    type="text"
+                    name="zipCode"
+                    value={formData.zipCode}
+                    onChange={handleInputChange}
+                    placeholder="10001"
+                    className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none transition-colors"
+                  />
                 </div>
               </div>
+
+              {/* Job Title */}
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">Job Title *</label>
+                <input
+                  type="text"
+                  name="jobTitle"
+                  value={formData.jobTitle}
+                  onChange={handleInputChange}
+                  placeholder="e.g. Senior Developer"
+                  className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none transition-colors"
+                />
+              </div>
+
+              {/* Company Name */}
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">Company Name *</label>
+                <input
+                  type="text"
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleInputChange}
+                  placeholder="e.g. Google"
+                  className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none transition-colors"
+                />
+              </div>
+
+              {/* Experience & Skills */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-slate-700">Experience</label>
+                  <input
+                    type="text"
+                    name="experience"
+                    value={formData.experience}
+                    onChange={handleInputChange}
+                    placeholder="e.g. 5 years"
+                    className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-slate-700">Key Skills</label>
+                  <input
+                    type="text"
+                    name="skills"
+                    value={formData.skills}
+                    onChange={handleInputChange}
+                    placeholder="e.g. React, Node.js"
+                    className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* Job Description */}
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">Job Description</label>
+                <textarea
+                  name="jobDescription"
+                  value={formData.jobDescription}
+                  onChange={handleInputChange}
+                  rows={5}
+                  placeholder="Paste the job description for better tailoring..."
+                  className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none transition-colors resize-none"
+                />
+              </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="flex items-start gap-3 rounded-lg bg-red-50 p-4 border border-red-100">
+                  <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              )}
+
+              {/* Generate Button */}
+              <button
+                onClick={generateCoverLetter}
+                disabled={isGenerating}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-5 w-5" />
+                    Generate Letter
+                  </>
+                )}
+              </button>
             </ToolCard>
           </div>
 
-          {/* Preview Section */}
-          <div className="flex flex-col space-y-6">
-            <ToolCard className="flex-1 flex flex-col h-full min-h-[500px]">
-              <div className="mb-6 flex items-center justify-between">
-                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          {/* Output Section */}
+          <div>
+            <ToolCard className="h-full flex flex-col">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                   <FileText className="h-5 w-5 text-blue-600" />
-                  Preview
+                  Your Cover Letter
                 </h2>
                 <AnimatePresence>
                   {coverLetter && (
@@ -251,15 +336,15 @@ export default function CoverLetterAI() {
                     >
                       <button
                         onClick={copyToClipboard}
-                        className="flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold text-slate-600 transition-all hover:bg-blue-50 hover:text-blue-600"
+                        className="flex items-center gap-2 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-700 px-3 py-2 text-sm font-medium transition-colors"
                         title="Copy to clipboard"
                       >
-                        {copied ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                        {copied ? <CheckCircle2 className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
                         {copied ? 'Copied' : 'Copy'}
                       </button>
                       <button
                         onClick={downloadText}
-                        className="flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold text-slate-600 transition-all hover:bg-blue-50 hover:text-blue-600"
+                        className="flex items-center gap-2 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-700 px-3 py-2 text-sm font-medium transition-colors"
                         title="Download as .txt"
                       >
                         <Download className="h-4 w-4" />
@@ -270,36 +355,19 @@ export default function CoverLetterAI() {
                 </AnimatePresence>
               </div>
 
-              <div className="flex-1 relative rounded-2xl bg-slate-50 p-8 text-sm leading-relaxed text-slate-700 border border-slate-100 shadow-inner overflow-y-auto max-h-[600px]">
+              <div className="flex-1 rounded-lg bg-slate-50 p-6 text-sm leading-relaxed text-slate-700 border border-slate-200 overflow-y-auto">
                 {coverLetter ? (
-                  <div className="whitespace-pre-wrap font-serif text-base">
+                  <div className="whitespace-pre-wrap font-serif text-base text-slate-800">
                     {coverLetter}
                   </div>
                 ) : (
-                  <div className="flex h-full flex-col items-center justify-center text-center text-slate-400">
-                    <div className="rounded-full bg-slate-100 p-8 mb-4">
-                      <FileText className="h-16 w-16 opacity-20" />
-                    </div>
-                    <p className="font-medium max-w-[250px]">Fill in the job details and click generate to see your AI-crafted cover letter here.</p>
+                  <div className="flex h-full flex-col items-center justify-center text-center">
+                    <FileText className="h-12 w-12 text-slate-300 mb-3" />
+                    <p className="text-slate-500 text-sm">Fill in your details and generate a tailored cover letter</p>
                   </div>
                 )}
               </div>
             </ToolCard>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <ToolStep 
-                number={1} 
-                title="Job Info" 
-                description="Enter the role and company details."
-                icon={Briefcase}
-              />
-              <ToolStep 
-                number={2} 
-                title="AI Magic" 
-                description="AI generates a tailored letter."
-                icon={Zap}
-              />
-            </div>
           </div>
         </div>
       </div>
