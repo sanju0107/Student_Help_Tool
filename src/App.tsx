@@ -9,6 +9,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { Loader2 } from 'lucide-react';
 import Layout from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { usePageTracking } from './lib/usePageTracking';
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -26,6 +27,12 @@ function ScrollToTop() {
     }
   }, [pathname, hash]);
 
+  return null;
+}
+
+// Track page views for analytics
+function PageTracker() {
+  usePageTracking();
   return null;
 }
 
@@ -156,6 +163,7 @@ export default function App() {
       </Suspense>
     </ErrorBoundary>
     <ScrollToTop />
+    <PageTracker />
   </Router>
 </HelmetProvider>
   );

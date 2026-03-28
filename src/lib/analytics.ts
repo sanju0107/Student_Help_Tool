@@ -1,7 +1,29 @@
 /**
  * Analytics tracking functions for the Student Help Tool
- * Tracks AI features and tool usage for analytics purposes
+ * Tracks page views, AI features, and tool usage for analytics purposes
+ * Google Analytics Measurement ID: G-MY48Y5CKC6
  */
+
+import { GA_MEASUREMENT_ID, ANALYTICS_EVENTS } from './gaConfig';
+
+/**
+ * Track page view
+ * Call this function when users navigate to different pages
+ * @param pageName - Name of the page for display purposes
+ */
+export const trackPageView = (pageName: string): void => {
+  try {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', ANALYTICS_EVENTS.PAGE_VIEW, {
+        'page_path': window.location.pathname,
+        'page_title': pageName,
+        'measurement_id': GA_MEASUREMENT_ID,
+      });
+    }
+  } catch (error) {
+    console.error('Error tracking page view:', error);
+  }
+};
 
 /**
  * Track AI feature usage
