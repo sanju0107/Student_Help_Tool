@@ -16,8 +16,67 @@ export default function Home() {
   return (
     <>
       <Helmet>
-        <title>CareerSuite - Professional Tools for Students & Job Seekers</title>
-        <meta name="description" content="The ultimate toolkit for students and job seekers. Resize images for SSC forms, hit exact KB targets, create resumes, and manage PDFs for free." />
+        {/* SEO Meta Tags */}
+        <title>Free Online Tools for Students - Image, PDF, Resume & More</title>
+        <meta name="description" content="CareerSuite: 18+ free online tools for students. Compress images, resize for SSC/UPSC, merge/split PDFs, build resumes. School-safe, fast, and secure. 500k+ users." />
+        <meta name="keywords" content="image compressor, resize image, pdf merger, resume builder, ssc photo resizer, online tools free, student tools" />
+        <meta name="author" content="CareerSuite" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="index, follow" />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Free Online Tools for Students - Image, PDF, Resume & More" />
+        <meta property="og:description" content="18+ free online tools for students and job seekers. Compress images, resize photos, merge PDFs, create resumes with AI. Client-side processing, 100% private." />
+        <meta property="og:url" content="https://careersuite.io" />
+        <meta property="og:image" content="https://careersuite.io/og-image.png" />
+        <meta property="og:locale" content="en_US" />
+        
+        {/* Twitter Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Free Online Tools for Students - CareerSuite" />
+        <meta name="twitter:description" content="Resize images, compress PDFs, build resumes, calculate GPA. 18+ tools for students, 500k+ users. Free, fast, secure." />
+        <meta name="twitter:image" content="https://careersuite.io/og-image.png" />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href="https://careersuite.io" />
+        
+        {/* Structured Data - Organization */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "CareerSuite",
+            "url": "https://careersuite.io",
+            "description": "Free online tools for students and job seekers",
+            "image": "https://careersuite.io/og-image.png",
+            "sameAs": [
+              "https://twitter.com/careersuite",
+              "https://facebook.com/careersuite"
+            ],
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "Customer Support",
+              "email": "support@careersuite.io"
+            }
+          })}
+        </script>
+        
+        {/* Structured Data - WebSite */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "CareerSuite",
+            "url": "https://careersuite.io",
+            "description": "Free online tools for students: image compression, PDF management, resume building, calculators",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://careersuite.io/search?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          })}
+        </script>
       </Helmet>
 
       {/* Hero Section */}

@@ -4,9 +4,25 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, Copy, Download, Loader2, FileText, AlertCircle, CheckCircle2 } from 'lucide-react';
 import OpenAI from 'openai';
 import { ToolHeader, ToolCard } from '../components/ToolUI';
+import RelatedTools from '../components/RelatedTools';
+import HowToUseSection from '../components/HowToUseSection';
+import FAQ from '../components/FAQ';
+import { useSEO } from '../lib/useSEO';
 import { trackAiFeature, trackToolUsage } from '../lib/analytics';
+import { TOOLS } from '../constants';
 
 export default function CoverLetterAI() {
+  const toolData = TOOLS.find(t => t.id === 'cover-letter-ai')!;
+  const { seoTitle, seoDescription, seoKeywords, intro, howToSteps, useCases, faqItems } = toolData;
+
+  // Generate SEO metadata
+  const seoData = useSEO({
+    title: seoTitle,
+    description: seoDescription,
+    keywords: seoKeywords,
+    pageUrl: 'https://careersuite.io/ai/cover-letter'
+  });
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -128,14 +144,32 @@ FORMAT & REQUIREMENTS:
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>AI Cover Letter Generator - Professional & Tailored | CareerSuite</title>
-        <meta name="description" content="Generate professional, job-winning cover letters tailored to your target role in seconds with AI." />
-        <meta name="keywords" content="ai cover letter generator, professional cover letter, job application letter" />
+        <title>{seoData.helmet.title}</title>
+        {seoData.helmet.meta.map((meta, idx) => (
+          <meta key={idx} {...meta} />
+        ))}
+        {seoData.helmet.link.map((link, idx) => (
+          <link key={idx} {...link} />
+        ))}
+        <script type="application/ld+json">
+          {JSON.stringify(seoData.structuredData)}
+        </script>
       </Helmet>
 
-      <div className="mx-auto max-w-6xl">
+      <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-5xl">
+          {/* SEO H1 Section */}
+          <div className="mb-12 text-center">
+            <h1 className="mb-4 text-4xl font-black text-slate-900 sm:text-5xl">
+              {seoTitle}
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-slate-600 leading-relaxed">
+              {intro}
+            </p>
+          </div>
+
         <ToolHeader 
           title="AI Cover Letter Generator"
           description="Create professional cover letters tailored to your target role in seconds."
@@ -369,6 +403,12 @@ FORMAT & REQUIREMENTS:
               </div>
             </ToolCard>
           </div>
+        </div>
+
+        {/* SEO Content Sections */}
+        <HowToUseSection steps={howToSteps} useCases={useCases} />
+        <FAQ items={faqItems} />
+        <RelatedTools currentToolId="cover-letter-ai" />
         </div>
       </div>
     </div>

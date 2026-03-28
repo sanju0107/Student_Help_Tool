@@ -20,11 +20,23 @@ import Cropper, { Area } from 'react-easy-crop';
 import confetti from 'canvas-confetti';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 import { FileUpload } from '../components/FileUpload';
+import RelatedTools from '../components/RelatedTools';
+import HowToUseSection from '../components/HowToUseSection';
+import FAQ from '../components/FAQ';
+import { useSEO } from '../lib/useSEO';
 import { TOOLS } from '../constants';
 
 export default function PassportPhotoMaker() {
   const toolData = TOOLS.find(t => t.id === 'passport-photo-maker')!;
-  const { name: title, description, longDescription } = toolData;
+  const { name: title, description, longDescription, seoTitle, seoDescription, seoKeywords, intro, howToSteps, useCases, faqItems } = toolData;
+  
+  // Generate SEO metadata
+  const seoData = useSEO({
+    title: seoTitle,
+    description: seoDescription,
+    keywords: seoKeywords,
+    pageUrl: 'https://careersuite.io/image/passport'
+  });
 
   const [image, setImage] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -143,18 +155,29 @@ export default function PassportPhotoMaker() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Free Online Passport Photo Maker | CareerSuite</title>
-        <meta name="description" content={description + " Create standard 3.5 x 4.5 cm passport size photos for Indian government applications. Fast, secure, and free online tool for students."} />
-        <meta name="keywords" content="passport photo maker, 3.5 x 4.5 cm photo, passport size photo online, ssc photo maker, upsc photo resizer, online passport photo crop" />
+        <title>{seoData.helmet.title}</title>
+        {seoData.helmet.meta.map((meta, idx) => (
+          <meta key={idx} {...meta} />
+        ))}
+        {seoData.helmet.link.map((link, idx) => (
+          <link key={idx} {...link} />
+        ))}
+        <script type="application/ld+json">
+          {JSON.stringify(seoData.structuredData)}
+        </script>
       </Helmet>
 
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-5xl">
-          <ToolHeader 
-            title={title}
-            description={description}
-            icon={Camera}
-          />
+          {/* SEO H1 Section */}
+          <div className="mb-12 text-center">
+            <h1 className="mb-4 text-4xl font-black text-slate-900 sm:text-5xl">
+              {seoTitle}
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-slate-600 leading-relaxed">
+              {intro}
+            </p>
+          </div>
 
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-8">
@@ -354,6 +377,11 @@ export default function PassportPhotoMaker() {
               </div>
             </div>
           </div>
+
+          {/* SEO Content Sections */}
+          <HowToUseSection steps={howToSteps} useCases={useCases} />
+          <FAQ items={faqItems} />
+          <RelatedTools currentToolId="passport-photo-maker" />
         </div>
       </div>
     </div>

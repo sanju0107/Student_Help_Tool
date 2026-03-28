@@ -19,12 +19,24 @@ import { createWorker } from 'tesseract.js';
 import { motion, AnimatePresence } from 'motion/react';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 import { FileUpload } from '../components/FileUpload';
+import RelatedTools from '../components/RelatedTools';
+import HowToUseSection from '../components/HowToUseSection';
+import FAQ from '../components/FAQ';
+import { useSEO } from '../lib/useSEO';
 import { TOOLS } from '../constants';
 import confetti from 'canvas-confetti';
 
 export default function OCRTool() {
   const toolData = TOOLS.find(t => t.id === 'ocr-tool')!;
-  const { name: title, description, longDescription } = toolData;
+  const { name: title, description, longDescription, seoTitle, seoDescription, seoKeywords, intro, howToSteps, useCases, faqItems } = toolData;
+  
+  // Generate SEO metadata
+  const seoData = useSEO({
+    title: seoTitle,
+    description: seoDescription,
+    keywords: seoKeywords,
+    pageUrl: 'https://careersuite.io/ocr-tool'
+  });
 
   const [image, setImage] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -119,13 +131,29 @@ export default function OCRTool() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Extract Text from Images | CareerSuite</title>
-        <meta name="description" content={description + " Free online OCR tool to extract text from images and screenshots. Fast, accurate, and completely free."} />
-        <meta name="keywords" content="image to text, ocr online free, extract text from image, screenshot to text, online ocr tool, image to editable text" />
+        <title>{seoData.helmet.title}</title>
+        {seoData.helmet.meta.map((meta, idx) => (
+          <meta key={idx} {...meta} />
+        ))}
+        {seoData.helmet.link.map((link, idx) => (
+          <link key={idx} {...link} />
+        ))}
+        <script type="application/ld+json">
+          {JSON.stringify(seoData.structuredData)}
+        </script>
       </Helmet>
 
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl">
+          {/* SEO H1 Section */}
+          <div className="mb-12 text-center">
+            <h1 className="mb-4 text-4xl font-black text-slate-900 sm:text-5xl">
+              {seoTitle}
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-slate-600 leading-relaxed">
+              {intro}
+            </p>
+          </div>
           <ToolHeader 
             title={title}
             description={description}
@@ -295,6 +323,10 @@ export default function OCRTool() {
               </div>
             </div>
           </div>
+          {/* SEO Content Sections */}
+          <HowToUseSection steps={howToSteps} useCases={useCases} />
+          <FAQ items={faqItems} />
+          <RelatedTools currentToolId="ocr-tool" />
         </div>
       </div>
     </div>

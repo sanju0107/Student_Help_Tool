@@ -5,7 +5,7 @@
 
 // Google Analytics Measurement ID
 // Update this ID in your .env file with: VITE_GA_MEASUREMENT_ID
-export const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-MY48Y5CKC6';
+export const GA_MEASUREMENT_ID = (import.meta.env.VITE_GA_MEASUREMENT_ID as string) || 'G-MY48Y5CKC6';
 
 // Analytics configuration
 export const ANALYTICS_CONFIG = {

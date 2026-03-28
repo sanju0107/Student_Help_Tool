@@ -17,11 +17,23 @@ import { removeBackground, Config } from '@imgly/background-removal';
 import confetti from 'canvas-confetti';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 import { FileUpload } from '../components/FileUpload';
+import RelatedTools from '../components/RelatedTools';
+import HowToUseSection from '../components/HowToUseSection';
+import FAQ from '../components/FAQ';
+import { useSEO } from '../lib/useSEO';
 import { TOOLS } from '../constants';
 
 export default function BackgroundRemover() {
   const toolData = TOOLS.find(t => t.id === 'background-remover')!;
-  const { name: title, description, longDescription } = toolData;
+  const { name: title, description, longDescription, seoTitle, seoDescription, seoKeywords, intro, howToSteps, useCases, faqItems } = toolData;
+  
+  // Generate SEO metadata
+  const seoData = useSEO({
+    title: seoTitle,
+    description: seoDescription,
+    keywords: seoKeywords,
+    pageUrl: 'https://careersuite.io/image/background-remover'
+  });
 
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -118,18 +130,29 @@ export default function BackgroundRemover() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - AI Background Remover | CareerSuite</title>
-        <meta name="description" content={description + " Remove background from images online for free using AI. Create transparent PNGs instantly with high precision."} />
-        <meta name="keywords" content="remove background, bg remover, transparent background, ai background removal, free online bg remover, image background eraser" />
+        <title>{seoData.helmet.title}</title>
+        {seoData.helmet.meta.map((meta, idx) => (
+          <meta key={idx} {...meta} />
+        ))}
+        {seoData.helmet.link.map((link, idx) => (
+          <link key={idx} {...link} />
+        ))}
+        <script type="application/ld+json">
+          {JSON.stringify(seoData.structuredData)}
+        </script>
       </Helmet>
 
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-5xl">
-          <ToolHeader 
-            title={title}
-            description={description}
-            icon={Eraser}
-          />
+          {/* SEO H1 Section */}
+          <div className="mb-12 text-center">
+            <h1 className="mb-4 text-4xl font-black text-slate-900 sm:text-5xl">
+              {seoTitle}
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-slate-600 leading-relaxed">
+              {intro}
+            </p>
+          </div>
 
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-8">
@@ -255,6 +278,11 @@ export default function BackgroundRemover() {
               </div>
             </div>
           </div>
+
+          {/* SEO Content Sections */}
+          <HowToUseSection steps={howToSteps} useCases={useCases} />
+          <FAQ items={faqItems} />
+          <RelatedTools currentToolId="background-remover" />
         </div>
       </div>
     </div>

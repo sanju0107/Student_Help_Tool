@@ -16,10 +16,23 @@ import {
   Timer
 } from 'lucide-react';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
+import RelatedTools from '../components/RelatedTools';
+import HowToUseSection from '../components/HowToUseSection';
+import FAQ from '../components/FAQ';
+import { useSEO } from '../lib/useSEO';
 import { TOOLS } from '../constants';
 
 export default function AgeCalculator() {
   const tool = useMemo(() => TOOLS.find(t => t.id === 'age-calculator')!, []);
+  const { seoTitle, seoDescription, seoKeywords, intro, howToSteps, useCases, faqItems } = tool;
+  
+  // Generate SEO metadata
+  const seoData = useSEO({
+    title: seoTitle,
+    description: seoDescription,
+    keywords: seoKeywords,
+    pageUrl: 'https://careersuite.io/student/age'
+  });
   
   const [birthDate, setBirthDate] = useState<string>('');
   const [targetDate, setTargetDate] = useState<string>(new Date().toISOString().split('T')[0]);
@@ -112,13 +125,29 @@ export default function AgeCalculator() {
   return (
     <div className="min-h-screen bg-[#f8fafc] py-12">
       <Helmet>
-        <title>{tool.name} - Precise Age for Exam Forms | CareerSuite</title>
-        <meta name="description" content={tool.longDescription} />
-        <meta name="keywords" content="age calculator, exam age calculator, upsc age limit, ssc age calculator, date of birth calculator, age in days, age in weeks" />
+        <title>{seoData.helmet.title}</title>
+        {seoData.helmet.meta.map((meta, idx) => (
+          <meta key={idx} {...meta} />
+        ))}
+        {seoData.helmet.link.map((link, idx) => (
+          <link key={idx} {...link} />
+        ))}
+        <script type="application/ld+json">
+          {JSON.stringify(seoData.structuredData)}
+        </script>
       </Helmet>
 
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-5xl">
+          {/* SEO H1 Section */}
+          <div className="mb-12 text-center">
+            <h1 className="mb-4 text-4xl font-black text-slate-900 sm:text-5xl">
+              {seoTitle}
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-slate-600 leading-relaxed">
+              {intro}
+            </p>
+          </div>
           <ToolHeader 
             title={tool.name}
             description={tool.description}
@@ -327,6 +356,11 @@ export default function AgeCalculator() {
               </div>
             </div>
           </div>
+
+          {/* SEO Content Sections */}
+          <HowToUseSection steps={howToSteps} useCases={useCases} />
+          <FAQ items={faqItems} />
+          <RelatedTools currentToolId="age-calculator" />
         </div>
       </div>
     </div>

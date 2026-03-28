@@ -18,11 +18,23 @@ import { formatBytes } from '../lib/utils';
 import confetti from 'canvas-confetti';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 import { FileUpload } from '../components/FileUpload';
+import RelatedTools from '../components/RelatedTools';
+import HowToUseSection from '../components/HowToUseSection';
+import FAQ from '../components/FAQ';
+import { useSEO } from '../lib/useSEO';
 import { TOOLS } from '../constants';
 
 export default function ExactKBConverter() {
   const toolData = TOOLS.find(t => t.id === 'exact-kb-converter')!;
-  const { name: title, description, longDescription } = toolData;
+  const { name: title, description, longDescription, seoTitle, seoDescription, seoKeywords, intro, howToSteps, useCases, faqItems } = toolData;
+  
+  // Generate SEO metadata
+  const seoData = useSEO({
+    title: seoTitle,
+    description: seoDescription,
+    keywords: seoKeywords,
+    pageUrl: 'https://careersuite.io/image/exact-kb'
+  });
 
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -141,13 +153,30 @@ export default function ExactKBConverter() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Exact KB Image Compressor | CareerSuite</title>
-        <meta name="description" content={description + " Resize images to 20KB, 50KB, or 100KB for SSC, Railway, Banking, and other government forms."} />
-        <meta name="keywords" content="resize image to 20kb, compress image to 50kb, image to kb converter, ssc form photo resizer, online image compressor to exact size, photo size reducer" />
+        <title>{seoData.helmet.title}</title>
+        {seoData.helmet.meta.map((meta, idx) => (
+          <meta key={idx} {...meta} />
+        ))}
+        {seoData.helmet.link.map((link, idx) => (
+          <link key={idx} {...link} />
+        ))}
+        <script type="application/ld+json">
+          {JSON.stringify(seoData.structuredData)}
+        </script>
       </Helmet>
 
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-5xl">
+          {/* SEO H1 Section */}
+          <div className="mb-12 text-center">
+            <h1 className="mb-4 text-4xl font-black text-slate-900 sm:text-5xl">
+              {seoTitle}
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-slate-600 leading-relaxed">
+              {intro}
+            </p>
+          </div>
+
           <ToolHeader 
             title={title}
             description={description}
@@ -342,6 +371,11 @@ export default function ExactKBConverter() {
               </div>
             </div>
           </div>
+
+          {/* SEO Content Sections */}
+          <HowToUseSection steps={howToSteps} useCases={useCases} />
+          <FAQ items={faqItems} />
+          <RelatedTools currentToolId="exact-kb-converter" />
         </div>
       </div>
     </div>

@@ -6,11 +6,23 @@ import { PDFDocument } from 'pdf-lib';
 import confetti from 'canvas-confetti';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 import { FileUpload } from '../components/FileUpload';
+import RelatedTools from '../components/RelatedTools';
+import HowToUseSection from '../components/HowToUseSection';
+import FAQ from '../components/FAQ';
+import { useSEO } from '../lib/useSEO';
 import { TOOLS } from '../constants';
 
 export default function SplitPDF() {
   const toolData = TOOLS.find(t => t.id === 'split-pdf')!;
-  const { name: title, description, longDescription } = toolData;
+  const { name: title, description, longDescription, seoTitle, seoDescription, seoKeywords, intro, howToSteps, useCases, faqItems } = toolData;
+  
+  // Generate SEO metadata
+  const seoData = useSEO({
+    title: seoTitle,
+    description: seoDescription,
+    keywords: seoKeywords,
+    pageUrl: 'https://careersuite.io/pdf/split'
+  });
 
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -124,13 +136,29 @@ export default function SplitPDF() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Extract Pages from PDF Online | CareerSuite</title>
-        <meta name="description" content={description + " Extract specific pages from your PDF documents for free. Simple, secure, and fast PDF splitting tool."} />
-        <meta name="keywords" content="split pdf, extract pdf pages, online pdf splitter, free pdf tool, separate pdf" />
+        <title>{seoData.helmet.title}</title>
+        {seoData.helmet.meta.map((meta, idx) => (
+          <meta key={idx} {...meta} />
+        ))}
+        {seoData.helmet.link.map((link, idx) => (
+          <link key={idx} {...link} />
+        ))}
+        <script type="application/ld+json">
+          {JSON.stringify(seoData.structuredData)}
+        </script>
       </Helmet>
 
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-5xl">
+          {/* SEO H1 Section */}
+          <div className="mb-12 text-center">
+            <h1 className="mb-4 text-4xl font-black text-slate-900 sm:text-5xl">
+              {seoTitle}
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-slate-600 leading-relaxed">
+              {intro}
+            </p>
+          </div>
           <ToolHeader 
             title={title}
             description={description}
@@ -295,6 +323,11 @@ export default function SplitPDF() {
               </div>
             </div>
           </div>
+
+          {/* SEO Content Sections */}
+          <HowToUseSection steps={howToSteps} useCases={useCases} />
+          <FAQ items={faqItems} />
+          <RelatedTools currentToolId="split-pdf" />
         </div>
       </div>
     </div>

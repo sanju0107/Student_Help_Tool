@@ -17,6 +17,10 @@ import {
   BookOpen
 } from 'lucide-react';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
+import RelatedTools from '../components/RelatedTools';
+import HowToUseSection from '../components/HowToUseSection';
+import FAQ from '../components/FAQ';
+import { useSEO } from '../lib/useSEO';
 import { TOOLS } from '../constants';
 
 interface Course {
@@ -39,7 +43,15 @@ const GRADE_POINTS: Record<string, number> = {
 
 export default function GPACalculator() {
   const toolData = TOOLS.find(t => t.id === 'gpa-calculator')!;
-  const { name: title, description, longDescription } = toolData;
+  const { name: title, description, longDescription, seoTitle, seoDescription, seoKeywords, intro, howToSteps, useCases, faqItems } = toolData;
+
+  // Generate SEO metadata
+  const seoData = useSEO({
+    title: seoTitle,
+    description: seoDescription,
+    keywords: seoKeywords,
+    pageUrl: 'https://careersuite.io/student/gpa'
+  });
 
   const [courses, setCourses] = useState<Course[]>([
     { id: '1', name: '', grade: 'O', credits: 4 },
@@ -81,13 +93,30 @@ export default function GPACalculator() {
   return (
     <div className="bg-[#fcfcfd] min-h-screen py-12 lg:py-20">
       <Helmet>
-        <title>{title} - Calculate CGPA & Percentage Online | CareerSuite</title>
-        <meta name="description" content={description + " Standard 10-point scale GPA calculator with percentage conversion for Indian universities. Free, fast, and accurate."} />
-        <meta name="keywords" content="gpa calculator, cgpa to percentage, semester gpa, academic calculator, student gpa tool" />
+        <title>{seoData.helmet.title}</title>
+        {seoData.helmet.meta.map((meta, idx) => (
+          <meta key={idx} {...meta} />
+        ))}
+        {seoData.helmet.link.map((link, idx) => (
+          <link key={idx} {...link} />
+        ))}
+        <script type="application/ld+json">
+          {JSON.stringify(seoData.structuredData)}
+        </script>
       </Helmet>
 
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-5xl">
+          {/* SEO H1 Section */}
+          <div className="mb-12 text-center">
+            <h1 className="mb-4 text-4xl font-black text-slate-900 sm:text-5xl">
+              {seoTitle}
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-slate-600 leading-relaxed">
+              {intro}
+            </p>
+          </div>
+
           <ToolHeader 
             title={title}
             description={description}
@@ -280,6 +309,11 @@ export default function GPACalculator() {
               </div>
             </div>
           </div>
+
+          {/* SEO Content Sections */}
+          <HowToUseSection steps={howToSteps} useCases={useCases} />
+          <FAQ items={faqItems} />
+          <RelatedTools currentToolId="gpa-calculator" />
         </div>
       </div>
     </div>

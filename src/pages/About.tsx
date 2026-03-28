@@ -7,8 +7,31 @@ export default function About() {
   return (
     <div className="min-h-screen bg-slate-50 py-12">
       <Helmet>
-        <title>About Us - CareerSuite | Our Mission & Values</title>
-        <meta name="description" content="Learn about CareerSuite, our mission to provide free, secure, and professional tools for students and job seekers worldwide." />
+        <title>About CareerSuite - Free Tools for Students & Job Seekers</title>
+        <meta name="description" content="CareerSuite is a free platform with 15+ online tools for students. Image compression, PDF management, resume building, and more. 100% secure and private. 500k+ users trust us." />
+        <meta name="keywords" content="about careersuite, free student tools, online tools platform, career tools, professional toolkit, student resources" />
+        <meta name="author" content="CareerSuite" />
+        <meta property="og:title" content="About CareerSuite - Our Story & Mission" />
+        <meta property="og:description" content="Learn how CareerSuite grew from a small project to help 500k+ students with professional tools for careers and education." />
+        <meta property="og:url" content="https://careersuite.io/about" />
+        <meta name="twitter:card" content="summary_large_image" />
+        
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "CareerSuite",
+            "url": "https://careersuite.io",
+            "description": "Free online tools platform for students and job seekers",
+            "image": "https://careersuite.io/og-image.png",
+            "foundingDate": "2021",
+            "numberOfEmployees": "small team",
+            "sameAs": [
+              "https://twitter.com/careersuite",
+              "https://facebook.com/careersuite"
+            ]
+          })}
+        </script>
       </Helmet>
 
       <div className="container mx-auto px-4">
@@ -80,18 +103,18 @@ export default function About() {
               </p>
               <div className="flex justify-center gap-4">
                 <div className="text-center">
-                  <div className="text-3xl font-black">50k+</div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-blue-200">Users Monthly</div>
+                  <div className="text-3xl font-black">500k+</div>
+                  <div className="text-xs font-bold uppercase tracking-widest text-blue-200">Users Trust Us</div>
                 </div>
                 <div className="h-12 w-px bg-white/20"></div>
                 <div className="text-center">
-                  <div className="text-3xl font-black">15+</div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-blue-200">Unique Tools</div>
+                  <div className="text-3xl font-black">18</div>
+                  <div className="text-xs font-bold uppercase tracking-widest text-blue-200">Professional Tools</div>
                 </div>
                 <div className="h-12 w-px bg-white/20"></div>
                 <div className="text-center">
                   <div className="text-3xl font-black">100%</div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-blue-200">Secure</div>
+                  <div className="text-xs font-bold uppercase tracking-widest text-blue-200">Secure & Private</div>
                 </div>
               </div>
             </div>
