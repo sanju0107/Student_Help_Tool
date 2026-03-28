@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, Copy, Download, Loader2, FileText, AlertCircle, CheckCircle2 } from 'lucide-react';
 import OpenAI from 'openai';
 import { ToolHeader, ToolCard } from '../components/ToolUI';
+import { APIKeyWarning } from '../components/APIKeyWarning';
 import RelatedTools from '../components/RelatedTools';
 import HowToUseSection from '../components/HowToUseSection';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
+import { checkOpenAIKeyAvailability } from '../lib/apiKeyUtils';
 import { trackAiFeature, trackToolUsage } from '../lib/analytics';
 import { TOOLS } from '../constants';
 
@@ -40,6 +42,10 @@ export default function CoverLetterAI() {
   const [coverLetter, setCoverLetter] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+
+  // Check API key availability
+  const apiKeyStatus = useMemo(() => checkOpenAIKeyAvailability(), []);
+  const isAPIConfigured = apiKeyStatus.isConfigured;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -175,6 +181,9 @@ FORMAT & REQUIREMENTS:
           description="Create professional cover letters tailored to your target role in seconds."
           icon={Sparkles}
         />
+
+        {/* API Key Status Warning */}
+        <APIKeyWarning isVisible={!isAPIConfigured} message={apiKeyStatus.message} />
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Form Section */}
