@@ -49,6 +49,8 @@ const MergePDF = lazy(() => import('./pages/MergePDF'));
 const SplitPDF = lazy(() => import('./pages/SplitPDF'));
 const ReducePDF = lazy(() => import('./pages/ReducePDF'));
 const DocConverter = lazy(() => import('./pages/DocConverter'));
+const ImageToPDF = lazy(() => import('./pages/ImageToPDF'));
+const WordToPDF = lazy(() => import('./pages/WordToPDF'));
 const GPACalculator = lazy(() => import('./pages/GPACalculator'));
 const AgeCalculator = lazy(() => import('./pages/AgeCalculator'));
 const OCRTool = lazy(() => import('./pages/OCRTool'));
@@ -125,6 +127,14 @@ export default function App() {
             <Route 
               path="/pdf/to-word" 
               element={<DocConverter />} 
+            />
+            <Route 
+              path="/pdf/image-to-pdf" 
+              element={<ImageToPDF />} 
+            />
+            <Route 
+              path="/pdf/word-to-pdf" 
+              element={<WordToPDF />} 
             />
 
             {/* Student Tools */}

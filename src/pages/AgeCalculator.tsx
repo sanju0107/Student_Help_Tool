@@ -17,14 +17,13 @@ import {
 } from 'lucide-react';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 import RelatedTools from '../components/RelatedTools';
-import HowToUseSection from '../components/HowToUseSection';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
 import { TOOLS } from '../constants';
 
 export default function AgeCalculator() {
   const tool = useMemo(() => TOOLS.find(t => t.id === 'age-calculator')!, []);
-  const { seoTitle, seoDescription, seoKeywords, intro, howToSteps, useCases, faqItems } = tool;
+  const { seoTitle, seoDescription, seoKeywords, intro, faqItems } = tool;
   
   // Generate SEO metadata
   const seoData = useSEO({
@@ -358,7 +357,6 @@ export default function AgeCalculator() {
           </div>
 
           {/* SEO Content Sections */}
-          <HowToUseSection steps={howToSteps} useCases={useCases} />
           <FAQ items={faqItems} />
           <RelatedTools currentToolId="age-calculator" />
         </div>

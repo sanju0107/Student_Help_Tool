@@ -20,7 +20,6 @@ import { Document, Packer, Paragraph, TextRun } from 'docx';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 import { FileUpload } from '../components/FileUpload';
 import RelatedTools from '../components/RelatedTools';
-import HowToUseSection from '../components/HowToUseSection';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
 import { TOOLS } from '../constants';
@@ -30,7 +29,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.j
 
 export default function DocConverter() {
   const toolData = TOOLS.find(t => t.id === 'pdf-to-word')!;
-  const { name: title, description, longDescription, seoTitle, seoDescription, seoKeywords, intro, howToSteps, useCases, faqItems } = toolData;
+  const { name: title, description, longDescription, seoTitle, seoDescription, seoKeywords, intro, faqItems } = toolData;
   
   // Generate SEO metadata
   const seoData = useSEO({

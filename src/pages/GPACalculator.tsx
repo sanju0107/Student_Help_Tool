@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 import RelatedTools from '../components/RelatedTools';
-import HowToUseSection from '../components/HowToUseSection';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
 import { TOOLS } from '../constants';
@@ -311,7 +310,6 @@ export default function GPACalculator() {
           </div>
 
           {/* SEO Content Sections */}
-          <HowToUseSection steps={howToSteps} useCases={useCases} />
           <FAQ items={faqItems} />
           <RelatedTools currentToolId="gpa-calculator" />
         </div>

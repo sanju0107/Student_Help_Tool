@@ -21,14 +21,13 @@ import confetti from 'canvas-confetti';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 import { FileUpload } from '../components/FileUpload';
 import RelatedTools from '../components/RelatedTools';
-import HowToUseSection from '../components/HowToUseSection';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
 import { TOOLS } from '../constants';
 
 export default function MergePDF() {
   const toolData = TOOLS.find(t => t.id === 'merge-pdf')!;
-  const { name: title, description, longDescription, seoTitle, seoDescription, seoKeywords, intro, howToSteps, useCases, faqItems } = toolData;
+  const { name: title, description, longDescription, seoTitle, seoDescription, seoKeywords, intro, faqItems } = toolData;
   
   // Generate SEO metadata
   const seoData = useSEO({

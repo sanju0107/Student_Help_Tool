@@ -6,7 +6,6 @@ import OpenAI from 'openai';
 import { ToolHeader, ToolCard } from '../components/ToolUI';
 import { APIKeyWarning } from '../components/APIKeyWarning';
 import RelatedTools from '../components/RelatedTools';
-import HowToUseSection from '../components/HowToUseSection';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
 import { checkOpenAIKeyAvailability } from '../lib/apiKeyUtils';
@@ -15,7 +14,7 @@ import { TOOLS } from '../constants';
 
 export default function CoverLetterAI() {
   const toolData = TOOLS.find(t => t.id === 'cover-letter-ai')!;
-  const { seoTitle, seoDescription, seoKeywords, intro, howToSteps, useCases, faqItems } = toolData;
+  const { seoTitle, seoDescription, seoKeywords, intro, faqItems } = toolData;
 
   // Generate SEO metadata
   const seoData = useSEO({
@@ -415,7 +414,6 @@ FORMAT & REQUIREMENTS:
         </div>
 
         {/* SEO Content Sections */}
-        <HowToUseSection steps={howToSteps} useCases={useCases} />
         <FAQ items={faqItems} />
         <RelatedTools currentToolId="cover-letter-ai" />
         </div>

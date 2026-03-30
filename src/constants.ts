@@ -650,6 +650,122 @@ export const TOOLS: Tool[] = [
       }
     ]
   },
+  {
+    id: 'image-to-pdf',
+    name: 'Image to PDF',
+    description: 'Convert images (JPG, PNG, WEBP) to PDF.',
+    longDescription: 'Combine multiple images into a single PDF document with customizable page sizes and margins. Perfect for scanned documents, photo albums, or document consolidation.',
+    icon: ImageIcon,
+    category: 'pdf',
+    path: '/pdf/image-to-pdf',
+    seoTitle: 'Image to PDF Converter - Free Online Tool',
+    seoDescription: 'Convert JPG, PNG, and WEBP images to PDF. Combine multiple images, choose page sizes, customize margins. Free and private.',
+    seoKeywords: ['image to pdf', 'convert image to pdf', 'jpg to pdf', 'png to pdf', 'webp to pdf', 'images to pdf converter'],
+    slug: 'image-to-pdf',
+    intro: 'Easily convert your images (JPG, PNG, WEBP) into a professional PDF document. Combine multiple images with custom page sizes and margins.',
+    howToSteps: [
+      {
+        title: 'Upload Images',
+        description: 'Add one or more images in JPG, PNG, or WEBP format'
+      },
+      {
+        title: 'Arrange & Configure',
+        description: 'Drag to reorder images and set page size and margins'
+      },
+      {
+        title: 'Convert',
+        description: 'Click convert to create your PDF'
+      },
+      {
+        title: 'Download',
+        description: 'Get your PDF file instantly'
+      }
+    ],
+    useCases: [
+      { title: 'Scan Documents' },
+      { title: 'Photo Albums' },
+      { title: 'Screenshot Collections' },
+      { title: 'Multiple Page Documents' },
+      { title: 'Document Consolidation' },
+      { title: 'Archive Creation' }
+    ],
+    faqItems: [
+      {
+        question: 'Can I reorder images?',
+        answer: 'Yes, drag and drop images to arrange them in any order before conversion.'
+      },
+      {
+        question: 'What page sizes are available?',
+        answer: 'A4 (210x297mm), Letter (215.9x279.4mm), and Fit-to-image modes are supported.'
+      },
+      {
+        question: 'Will image quality be preserved?',
+        answer: 'Yes, images are embedded in the PDF at their original quality. Margins can be added for professional appearance.'
+      },
+      {
+        question: 'What image formats are supported?',
+        answer: 'JPG, PNG, and WEBP formats are fully supported.'
+      }
+    ]
+  },
+  {
+    id: 'word-to-pdf',
+    name: 'Word to PDF',
+    description: 'Convert Word documents (.docx) to PDF.',
+    longDescription: 'Convert Microsoft Word documents to PDF format with recommended tools and methods. This page explains why browser-based conversion is limited and provides reliable alternatives.',
+    icon: FileType,
+    category: 'pdf',
+    path: '/pdf/word-to-pdf',
+    seoTitle: 'Word to PDF Converter - DOCX to PDF Online',
+    seoDescription: 'Convert Word (.docx) documents to PDF with formatting preserved. Learn the best methods and recommended tools for reliable DOCX to PDF conversion.',
+    seoKeywords: ['word to pdf', 'docx to pdf', 'convert word to pdf', 'word converter', 'doc to pdf', 'document conversion'],
+    slug: 'word-to-pdf',
+    intro: 'Learn the best ways to convert Word documents to PDF with full formatting. This page explains why we recommend external services and provides quick links to trusted converters.',
+    howToSteps: [
+      {
+        title: 'Choose Method',
+        description: 'Select from recommended online services or Microsoft tools'
+      },
+      {
+        title: 'Upload or Open',
+        description: 'Upload your Word file or open in Microsoft Office'
+      },
+      {
+        title: 'Convert',
+        description: 'Click export/convert to PDF option'
+      },
+      {
+        title: 'Download',
+        description: 'Save your PDF file'
+      }
+    ],
+    useCases: [
+      { title: 'Document Sharing' },
+      { title: 'Preserve Formatting' },
+      { title: 'Create Reports' },
+      { title: 'Professional Documents' },
+      { title: 'Archive Documents' },
+      { title: 'Email Attachments' }
+    ],
+    faqItems: [
+      {
+        question: 'Why not a browser-based converter?',
+        answer: 'Converting DOCX with full formatting preservation requires parsing Microsoft\'s complex format and font rendering, which adds significant size and complexity to web apps.'
+      },
+      {
+        question: 'Which service should I use?',
+        answer: 'Smallpdf and iLovePDF are popular free options. Microsoft Word\'s native export is the most reliable.'
+      },
+      {
+        question: 'Will my formatting be preserved?',
+        answer: 'Yes, with proper tools. Use Microsoft Word\'s export feature or dedicated online services for best results.'
+      },
+      {
+        question: 'Is my file secure?',
+        answer: 'Use reputable services or Microsoft\'s own tools. Always check privacy policies if uploading to external services.'
+      }
+    ]
+  },
   // Student Tools
   {
     id: 'gpa-calculator',

@@ -27,7 +27,6 @@ import OpenAI from 'openai';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 import { APIKeyWarning } from '../components/APIKeyWarning';
 import RelatedTools from '../components/RelatedTools';
-import HowToUseSection from '../components/HowToUseSection';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
 import { checkOpenAIKeyAvailability } from '../lib/apiKeyUtils';
@@ -60,7 +59,7 @@ const STEPS = [
 
 export default function ResumeBuilder() {
   const toolData = TOOLS.find(t => t.id === 'resume-builder')!;
-  const { seoTitle, seoDescription, seoKeywords, intro, howToSteps, useCases, faqItems } = toolData;
+  const { seoTitle, seoDescription, seoKeywords, intro, faqItems } = toolData;
 
   // Generate SEO metadata
   const seoData = useSEO({
@@ -833,7 +832,6 @@ export default function ResumeBuilder() {
           </div>
 
           {/* SEO Content Sections */}
-          <HowToUseSection steps={howToSteps} useCases={useCases} />
           <FAQ items={faqItems} />
           <RelatedTools currentToolId="resume-builder" />
         </div>
