@@ -28,6 +28,7 @@ import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 import { APIKeyWarning } from '../components/APIKeyWarning';
 import RelatedTools from '../components/RelatedTools';
 import FAQ from '../components/FAQ';
+import { ProfessionalResumePreview } from '../components/ResumePreviewComponents';
 import { useSEO } from '../lib/useSEO';
 import { checkOpenAIKeyAvailability } from '../lib/apiKeyUtils';
 import { trackAiFeature, trackToolUsage } from '../lib/analytics';
@@ -232,116 +233,139 @@ export default function ResumeBuilder() {
   const downloadResume = () => {
     setIsGenerating(true);
     try {
-      const doc = new jsPDF();
-      const margin = 20;
-      let y = 20;
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+      
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 15;
+      const contentWidth = pageWidth - (margin * 2);
+      let y = 15;
 
-      // Name
-      doc.setFontSize(24);
-      doc.setTextColor(30, 41, 59); // slate-800
+      // Helper functions
+      const addSectionTitle = (title: string) => {
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(30, 41, 59);
+        doc.text(title.toUpperCase(), margin, y);
+        y += 1.5;
+        doc.setDrawColor(100, 116, 139);
+        doc.line(margin, y, pageWidth - margin, y);
+        y += 4;
+      };
+
+      // HEADER - Name and Contact
+      doc.setFontSize(20);
       doc.setFont('helvetica', 'bold');
+      doc.setTextColor(15, 23, 42);
       doc.text(data.personal.name || 'Your Name', margin, y);
-      y += 10;
+      y += 8;
 
       // Contact Info
-      doc.setFontSize(10);
-      doc.setTextColor(100, 116, 139); // slate-500
+      doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
-      const contactInfo = [data.personal.email, data.personal.phone, data.personal.location, data.personal.website].filter(Boolean).join(' | ');
-      doc.text(contactInfo, margin, y);
-      y += 15;
+      doc.setTextColor(80, 95, 120);
+      const contactItems = [data.personal.email, data.personal.phone, data.personal.location, data.personal.website].filter(Boolean);
+      if (contactItems.length) {
+        const contactLine = contactItems.join(' | ');
+        doc.text(contactLine, margin, y);
+      }
+      y += 6;
 
-      // Line separator
-      doc.setDrawColor(226, 232, 240); // slate-200
-      doc.line(margin, y - 5, 190, y - 5);
-
-      // Summary
-      if (data.personal.summary) {
-        doc.setFontSize(12);
-        doc.setTextColor(37, 99, 235); // blue-600
-        doc.setFont('helvetica', 'bold');
-        doc.text('PROFESSIONAL SUMMARY', margin, y);
-        y += 7;
-        doc.setFontSize(10);
-        doc.setTextColor(51, 65, 85); // slate-700
+      // SUMMARY
+      if (data.personal.summary && data.personal.summary.trim()) {
+        addSectionTitle('Summary');
+        doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
-        const summaryLines = doc.splitTextToSize(data.personal.summary, 170);
-        doc.text(summaryLines, margin, y);
-        y += (summaryLines.length * 5) + 10;
-      }
-
-      // Experience
-      if (data.experience.some(e => e.company)) {
-        doc.setFontSize(12);
-        doc.setTextColor(37, 99, 235);
-        doc.setFont('helvetica', 'bold');
-        doc.text('EXPERIENCE', margin, y);
-        y += 7;
-        data.experience.forEach(exp => {
-          if (!exp.company) return;
-          doc.setFontSize(11);
-          doc.setTextColor(30, 41, 59);
-          doc.setFont('helvetica', 'bold');
-          doc.text(`${exp.position} at ${exp.company}`, margin, y);
-          doc.setFontSize(10);
-          doc.setTextColor(100, 116, 139);
-          doc.setFont('helvetica', 'italic');
-          doc.text(exp.duration, 190, y, { align: 'right' });
-          y += 5;
-          doc.setFont('helvetica', 'normal');
-          doc.setTextColor(51, 65, 85);
-          const descLines = doc.splitTextToSize(exp.description, 170);
-          doc.text(descLines, margin, y);
-          y += (descLines.length * 5) + 7;
-        });
-      }
-
-      // Education
-      if (data.education.some(e => e.school)) {
-        y += 5;
-        doc.setFontSize(12);
-        doc.setTextColor(37, 99, 235);
-        doc.setFont('helvetica', 'bold');
-        doc.text('EDUCATION', margin, y);
-        y += 7;
-        data.education.forEach(edu => {
-          if (!edu.school) return;
-          doc.setFontSize(11);
-          doc.setTextColor(30, 41, 59);
-          doc.setFont('helvetica', 'bold');
-          doc.text(edu.degree, margin, y);
-          doc.setFontSize(10);
-          doc.setTextColor(100, 116, 139);
-          doc.setFont('helvetica', 'italic');
-          doc.text(edu.year, 190, y, { align: 'right' });
-          y += 5;
-          doc.setFont('helvetica', 'normal');
-          doc.setTextColor(51, 65, 85);
-          doc.text(edu.school, margin, y);
-          y += 10;
-        });
-      }
-
-      // Skills
-      if (data.skills.some(s => s)) {
-        y += 5;
-        doc.setFontSize(12);
-        doc.setTextColor(37, 99, 235);
-        doc.setFont('helvetica', 'bold');
-        doc.text('SKILLS', margin, y);
-        y += 7;
-        doc.setFontSize(10);
         doc.setTextColor(51, 65, 85);
+        const summaryLines = doc.splitTextToSize(data.personal.summary, contentWidth);
+        doc.text(summaryLines, margin, y);
+        y += (summaryLines.length * 3.5) + 4;
+      }
+
+      // EXPERIENCE
+      const hasExperience = data.experience.some(e => e.company && e.company.trim());
+      if (hasExperience) {
+        addSectionTitle('Experience');
+        data.experience.forEach(exp => {
+          if (!exp.company || !exp.company.trim()) return;
+          
+          // Job title and company
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(30, 41, 59);
+          const jobLine = `${exp.position} — ${exp.company}`.substring(0, 80);
+          doc.text(jobLine, margin, y);
+          
+          // Duration on the right
+          if (exp.duration) {
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(100, 116, 139);
+            doc.text(exp.duration, pageWidth - margin - 20, y, { align: 'right' });
+          }
+          y += 5;
+
+          // Description
+          if (exp.description && exp.description.trim()) {
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(51, 65, 85);
+            const descLines = doc.splitTextToSize(exp.description, contentWidth);
+            doc.text(descLines, margin, y);
+            y += (descLines.length * 3) + 5;
+          } else {
+            y += 2;
+          }
+        });
+        y += 2;
+      }
+
+      // EDUCATION
+      const hasEducation = data.education.some(e => e.school && e.school.trim());
+      if (hasEducation) {
+        addSectionTitle('Education');
+        data.education.forEach(edu => {
+          if (!edu.school || !edu.school.trim()) return;
+          
+          // Degree and school
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(30, 41, 59);
+          const eduLine = `${edu.degree}${edu.school ? ' — ' + edu.school : ''}`.substring(0, 80);
+          doc.text(eduLine, margin, y);
+          
+          // Year on the right
+          if (edu.year) {
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(100, 116, 139);
+            doc.text(edu.year, pageWidth - margin - 20, y, { align: 'right' });
+          }
+          y += 6;
+        });
+        y += 2;
+      }
+
+      // SKILLS
+      const filteredSkills = data.skills.filter(s => s && s.trim());
+      if (filteredSkills.length > 0) {
+        addSectionTitle('Skills');
+        doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
-        const skillsText = data.skills.filter(Boolean).join(', ');
-        const skillsLines = doc.splitTextToSize(skillsText, 170);
+        doc.setTextColor(51, 65, 85);
+        const skillsText = filteredSkills.join(', ');
+        const skillsLines = doc.splitTextToSize(skillsText, contentWidth);
         doc.text(skillsLines, margin, y);
       }
 
-      const fileName = (data.personal.name || 'resume').replace(/\s+/g, '-');
+      const fileName = (data.personal.name || 'resume').replace(/\s+/g, '-').toLowerCase();
       doc.save(`${fileName}.pdf`);
+      setError(null);
     } catch (err) {
-      setError('Failed to generate PDF. Please try again.');
+      setError('Failed to generate PDF. Please ensure all required fields are filled.');
       console.error(err);
     } finally {
       setIsGenerating(false);
@@ -592,48 +616,18 @@ export default function ResumeBuilder() {
         return (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-8">
             <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-              <h3 className="mb-6 text-xl font-bold text-slate-900">Final Preview</h3>
-              <div className="aspect-[1/1.414] w-full overflow-hidden rounded-xl border border-slate-100 bg-white p-8 text-[10px] shadow-inner sm:text-xs">
-                <div className="text-center">
-                  <div className="text-xl font-bold text-slate-900">{data.personal.name || 'Your Name'}</div>
-                  <div className="text-slate-500">{data.personal.email} | {data.personal.phone}</div>
-                </div>
-                <div className="my-4 h-px w-full bg-slate-200"></div>
-                <div className="space-y-4">
-                  {data.personal.summary && (
-                    <div>
-                      <div className="font-bold text-blue-600">SUMMARY</div>
-                      <p className="text-slate-700 leading-relaxed">{data.personal.summary}</p>
-                    </div>
-                  )}
-                  {data.experience.some(e => e.company) && (
-                    <div>
-                      <div className="font-bold text-blue-600">EXPERIENCE</div>
-                      {data.experience.map(exp => exp.company && (
-                        <div key={exp.id} className="mt-2">
-                          <div className="flex justify-between font-bold">
-                            <span>{exp.position} at {exp.company}</span>
-                            <span className="italic">{exp.duration}</span>
-                          </div>
-                          <p className="text-slate-600">{exp.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {data.education.some(e => e.school) && (
-                    <div>
-                      <div className="font-bold text-blue-600">EDUCATION</div>
-                      {data.education.map(edu => edu.school && (
-                        <div key={edu.id} className="mt-2 flex justify-between">
-                          <div>
-                            <div className="font-bold">{edu.degree}</div>
-                            <div>{edu.school}</div>
-                          </div>
-                          <span className="italic">{edu.year}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+              <h3 className="mb-6 text-xl font-bold text-slate-900">Professional Resume Preview</h3>
+              <div className="aspect-[1/1.414] w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg">
+                <div className="h-full overflow-auto">
+                  <div className="scale-[0.6] origin-top-left w-[166.67%] h-[166.67%]">
+                    <ProfessionalResumePreview
+                      personal={data.personal}
+                      experience={data.experience}
+                      education={data.education}
+                      skills={data.skills}
+                      summary={data.personal.summary}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
