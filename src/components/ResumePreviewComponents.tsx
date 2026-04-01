@@ -179,6 +179,101 @@ export function ResumeSkillsSection({
   );
 }
 
+// Project Item Component
+export function ResumeProjectItem({
+  title,
+  description,
+  techStack
+}: {
+  title: string;
+  description?: string;
+  techStack?: string;
+}) {
+  return (
+    <div className="mb-2.5">
+      <div className="font-semibold text-slate-900">{title}</div>
+      {techStack && (
+        <div className="text-xs text-slate-600 italic">{techStack}</div>
+      )}
+      {description && (
+        <p className="text-xs text-slate-700 mt-1">{description}</p>
+      )}
+    </div>
+  );
+}
+
+// Position of Responsibility Item Component
+export function ResumePositionItem({
+  role,
+  organization,
+  duration,
+  description
+}: {
+  role: string;
+  organization: string;
+  duration?: string;
+  description?: string;
+}) {
+  return (
+    <div className="mb-2.5">
+      <div className="flex items-baseline justify-between mb-0.5">
+        <span className="font-semibold text-slate-900">
+          {role}
+          {organization && <span className="font-normal"> — {organization}</span>}
+        </span>
+        {duration && (
+          <span className="text-xs text-slate-600 ml-2 flex-shrink-0">
+            {duration}
+          </span>
+        )}
+      </div>
+      {description && (
+        <p className="text-xs text-slate-700">{description}</p>
+      )}
+    </div>
+  );
+}
+
+// Achievement Item Component
+export function ResumeAchievementItem({
+  title,
+  description,
+  year
+}: {
+  title: string;
+  description?: string;
+  year?: string;
+}) {
+  return (
+    <div className="text-xs text-slate-700 flex items-start mb-1.5">
+      <span className="mr-2 flex-shrink-0">•</span>
+      <span>
+        {title}{year && <span className="text-slate-600"> ({year})</span>}
+        {description && <span className="block text-slate-600">{description}</span>}
+      </span>
+    </div>
+  );
+}
+
+// Certification Item Component
+export function ResumeCertificationItem({
+  name,
+  organization,
+  year
+}: {
+  name: string;
+  organization: string;
+  year?: string;
+}) {
+  return (
+    <div className="text-xs text-slate-700 mb-1">
+      <span className="font-semibold text-slate-900">{name}</span>
+      <span> — {organization}</span>
+      {year && <span className="text-slate-600"> ({year})</span>}
+    </div>
+  );
+}
+
 // Summary Section Component
 export function ResumeSummarySection({ text }: { text: string }) {
   if (!text) return null;
@@ -195,6 +290,10 @@ export function ProfessionalResumePreview({
   personal,
   experience,
   education,
+  projects,
+  positions,
+  achievements,
+  certifications,
   skills,
   summary
 }: {
@@ -219,6 +318,31 @@ export function ProfessionalResumePreview({
     school: string;
     year?: string;
     gpa?: string;
+  }>;
+  projects?: Array<{
+    id?: string;
+    title: string;
+    description?: string;
+    techStack?: string;
+  }>;
+  positions?: Array<{
+    id?: string;
+    role: string;
+    organization: string;
+    duration?: string;
+    description?: string;
+  }>;
+  achievements?: Array<{
+    id?: string;
+    title: string;
+    description?: string;
+    year?: string;
+  }>;
+  certifications?: Array<{
+    id?: string;
+    name: string;
+    organization: string;
+    year?: string;
   }>;
   skills: string[];
   summary?: string;
@@ -278,6 +402,83 @@ export function ProfessionalResumePreview({
                   degree={edu.degree || ''}
                   school={edu.school || ''}
                   year={edu.year}
+                />
+              )
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Projects */}
+      {projects && projects.some(p => p.title && p.title.trim()) && (
+        <>
+          <ResumeSectionHeader title="Projects" />
+          <div className="space-y-2">
+            {projects.map(proj => (
+              proj.title && proj.title.trim() && (
+                <ResumeProjectItem
+                  key={proj.id}
+                  title={proj.title}
+                  description={proj.description}
+                  techStack={proj.techStack}
+                />
+              )
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Positions of Responsibility */}
+      {positions && positions.some(p => p.role && p.role.trim()) && (
+        <>
+          <ResumeSectionHeader title="Positions of Responsibility" />
+          <div className="space-y-2">
+            {positions.map(pos => (
+              pos.role && pos.role.trim() && (
+                <ResumePositionItem
+                  key={pos.id}
+                  role={pos.role}
+                  organization={pos.organization}
+                  duration={pos.duration}
+                  description={pos.description}
+                />
+              )
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Achievements */}
+      {achievements && achievements.some(a => a.title && a.title.trim()) && (
+        <>
+          <ResumeSectionHeader title="Achievements" />
+          <div>
+            {achievements.map(ach => (
+              ach.title && ach.title.trim() && (
+                <ResumeAchievementItem
+                  key={ach.id}
+                  title={ach.title}
+                  description={ach.description}
+                  year={ach.year}
+                />
+              )
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Certifications */}
+      {certifications && certifications.some(c => c.name && c.name.trim()) && (
+        <>
+          <ResumeSectionHeader title="Certifications" />
+          <div>
+            {certifications.map(cert => (
+              cert.name && cert.name.trim() && (
+                <ResumeCertificationItem
+                  key={cert.id}
+                  name={cert.name}
+                  organization={cert.organization}
+                  year={cert.year}
                 />
               )
             ))}

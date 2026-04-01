@@ -45,6 +45,10 @@ interface ResumeData {
   };
   experience: { id: string; company: string; position: string; duration: string; description: string }[];
   education: { id: string; school: string; degree: string; year: string }[];
+  projects: { id: string; title: string; description: string; techStack: string; link: string }[];
+  positions: { id: string; role: string; organization: string; duration: string; description: string }[];
+  achievements: { id: string; title: string; description: string; year: string }[];
+  certifications: { id: string; name: string; organization: string; year: string; link: string }[];
   skills: string[];
   coverLetter: string;
 }
@@ -53,6 +57,10 @@ const STEPS = [
   { id: 'personal', title: 'Personal', icon: User, description: 'Contact info & summary' },
   { id: 'experience', title: 'Experience', icon: Briefcase, description: 'Work history' },
   { id: 'education', title: 'Education', icon: GraduationCap, description: 'Academic background' },
+  { id: 'projects', title: 'Projects', icon: Layout, description: 'Optional: Add projects' },
+  { id: 'positions', title: 'Positions', icon: Award, description: 'Optional: Leadership roles' },
+  { id: 'achievements', title: 'Achievements', icon: Award, description: 'Optional: Honors & awards' },
+  { id: 'certifications', title: 'Certifications', icon: Award, description: 'Optional: Credentials' },
   { id: 'skills', title: 'Skills', icon: Award, description: 'Core competencies' },
   { id: 'cover-letter', title: 'Cover Letter', icon: FileText, description: 'AI generated letter' },
   { id: 'preview', title: 'Preview', icon: CheckCircle2, description: 'Download PDF' },
@@ -75,6 +83,10 @@ export default function ResumeBuilder() {
     personal: { name: '', email: '', phone: '', location: '', website: '', summary: '' },
     experience: [{ id: '1', company: '', position: '', duration: '', description: '' }],
     education: [{ id: '1', school: '', degree: '', year: '' }],
+    projects: [{ id: '1', title: '', description: '', techStack: '', link: '' }],
+    positions: [{ id: '1', role: '', organization: '', duration: '', description: '' }],
+    achievements: [{ id: '1', title: '', description: '', year: '' }],
+    certifications: [{ id: '1', name: '', organization: '', year: '', link: '' }],
     skills: [''],
     coverLetter: '',
   });
@@ -118,6 +130,78 @@ export default function ResumeBuilder() {
 
   const removeEducation = (id: string) => {
     setData({ ...data, education: data.education.filter(e => e.id !== id) });
+  };
+
+  const addProject = () => {
+    setData({
+      ...data,
+      projects: [...data.projects, { id: Date.now().toString(), title: '', description: '', techStack: '', link: '' }]
+    });
+  };
+
+  const updateProject = (id: string, field: string, value: string) => {
+    setData({
+      ...data,
+      projects: data.projects.map(p => p.id === id ? { ...p, [field]: value } : p)
+    });
+  };
+
+  const removeProject = (id: string) => {
+    setData({ ...data, projects: data.projects.filter(p => p.id !== id) });
+  };
+
+  const addPosition = () => {
+    setData({
+      ...data,
+      positions: [...data.positions, { id: Date.now().toString(), role: '', organization: '', duration: '', description: '' }]
+    });
+  };
+
+  const updatePosition = (id: string, field: string, value: string) => {
+    setData({
+      ...data,
+      positions: data.positions.map(p => p.id === id ? { ...p, [field]: value } : p)
+    });
+  };
+
+  const removePosition = (id: string) => {
+    setData({ ...data, positions: data.positions.filter(p => p.id !== id) });
+  };
+
+  const addAchievement = () => {
+    setData({
+      ...data,
+      achievements: [...data.achievements, { id: Date.now().toString(), title: '', description: '', year: '' }]
+    });
+  };
+
+  const updateAchievement = (id: string, field: string, value: string) => {
+    setData({
+      ...data,
+      achievements: data.achievements.map(a => a.id === id ? { ...a, [field]: value } : a)
+    });
+  };
+
+  const removeAchievement = (id: string) => {
+    setData({ ...data, achievements: data.achievements.filter(a => a.id !== id) });
+  };
+
+  const addCertification = () => {
+    setData({
+      ...data,
+      certifications: [...data.certifications, { id: Date.now().toString(), name: '', organization: '', year: '', link: '' }]
+    });
+  };
+
+  const updateCertification = (id: string, field: string, value: string) => {
+    setData({
+      ...data,
+      certifications: data.certifications.map(c => c.id === id ? { ...c, [field]: value } : c)
+    });
+  };
+
+  const removeCertification = (id: string) => {
+    setData({ ...data, certifications: data.certifications.filter(c => c.id !== id) });
   };
 
   const updateEducation = (id: string, field: string, value: string) => {
@@ -349,6 +433,141 @@ export default function ResumeBuilder() {
         y += 2;
       }
 
+      // PROJECTS
+      const hasProjects = data.projects && data.projects.some(p => p.title && p.title.trim());
+      if (hasProjects) {
+        addSectionTitle('Projects');
+        data.projects.forEach(proj => {
+          if (!proj.title || !proj.title.trim()) return;
+          
+          // Project title (bold)
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(30, 41, 59);
+          doc.text(proj.title, margin, y);
+          y += 5;
+          
+          // Tech stack (italic, if present)
+          if (proj.techStack && proj.techStack.trim()) {
+            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(9);
+            doc.setTextColor(100, 116, 139);
+            const techLine = doc.splitTextToSize(`${proj.techStack}`, contentWidth - 5);
+            doc.text(techLine, margin + 2, y);
+            y += techLine.length * 4 + 1;
+          }
+          
+          // Description
+          if (proj.description && proj.description.trim()) {
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(51, 65, 85);
+            const descLines = doc.splitTextToSize(proj.description, contentWidth - 5);
+            doc.text(descLines, margin + 2, y);
+            y += descLines.length * 4 + 2;
+          }
+          
+          y += 1;
+        });
+        y += 2;
+      }
+
+      // POSITIONS OF RESPONSIBILITY
+      const hasPositions = data.positions && data.positions.some(p => p.role && p.role.trim());
+      if (hasPositions) {
+        addSectionTitle('Positions of Responsibility');
+        data.positions.forEach(pos => {
+          if (!pos.role || !pos.role.trim()) return;
+          
+          // Role and organization
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(30, 41, 59);
+          const posLine = `${pos.role}${pos.organization ? ' — ' + pos.organization : ''}`.substring(0, 80);
+          doc.text(posLine, margin, y);
+          
+          // Duration on the right
+          if (pos.duration) {
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(100, 116, 139);
+            doc.text(pos.duration, pageWidth - margin - 20, y, { align: 'right' });
+          }
+          y += 6;
+          
+          // Description
+          if (pos.description && pos.description.trim()) {
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(51, 65, 85);
+            const descLines = doc.splitTextToSize(pos.description, contentWidth - 5);
+            doc.text(descLines, margin + 2, y);
+            y += descLines.length * 4 + 1;
+          }
+          
+          y += 1;
+        });
+        y += 2;
+      }
+
+      // ACHIEVEMENTS
+      const hasAchievements = data.achievements && data.achievements.some(a => a.title && a.title.trim());
+      if (hasAchievements) {
+        addSectionTitle('Achievements');
+        data.achievements.forEach(ach => {
+          if (!ach.title || !ach.title.trim()) return;
+          
+          doc.setFontSize(9);
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(51, 65, 85);
+          
+          // Bullet point with title and year
+          const achText = `${ach.title}${ach.year ? ' (' + ach.year + ')' : ''}`;
+          const achLines = doc.splitTextToSize(`• ${achText}`, contentWidth - 5);
+          doc.text(achLines, margin + 2, y);
+          y += achLines.length * 4;
+          
+          // Description if present
+          if (ach.description && ach.description.trim()) {
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(100, 116, 139);
+            const descLines = doc.splitTextToSize(ach.description, contentWidth - 10);
+            doc.text(descLines, margin + 5, y);
+            y += descLines.length * 4;
+          }
+          
+          y += 1;
+        });
+        y += 2;
+      }
+
+      // CERTIFICATIONS
+      const hasCertifications = data.certifications && data.certifications.some(c => c.name && c.name.trim());
+      if (hasCertifications) {
+        addSectionTitle('Certifications');
+        data.certifications.forEach(cert => {
+          if (!cert.name || !cert.name.trim()) return;
+          
+          // Certificate name and organization
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(30, 41, 59);
+          const certLine = `${cert.name}${cert.organization ? ' — ' + cert.organization : ''}`.substring(0, 80);
+          doc.text(certLine, margin, y);
+          
+          // Year on the right
+          if (cert.year) {
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(100, 116, 139);
+            doc.text(cert.year, pageWidth - margin - 20, y, { align: 'right' });
+          }
+          y += 6;
+        });
+        y += 2;
+      }
+
       // SKILLS
       const filteredSkills = data.skills.filter(s => s && s.trim());
       if (filteredSkills.length > 0) {
@@ -563,6 +782,243 @@ export default function ResumeBuilder() {
             </div>
           </motion.div>
         );
+      case 'projects':
+        return (
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-800">Projects (Optional)</h3>
+              <button onClick={addProject} className="btn-secondary px-4 py-2 text-xs flex items-center gap-2">
+                <Plus className="h-4 w-4" /> Add Project
+              </button>
+            </div>
+            <div className="space-y-4">
+              {data.projects.map((proj) => (
+                <div key={proj.id} className="rounded-2xl border border-slate-200 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 p-6">
+                  <button 
+                    onClick={() => removeProject(proj.id)}
+                    className="float-right text-slate-400 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="md:col-span-2">
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Project Title</label>
+                      <input 
+                        type="text" 
+                        value={proj.title}
+                        onChange={(e) => updateProject(proj.id, 'title', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Description</label>
+                      <textarea 
+                        value={proj.description}
+                        onChange={(e) => updateProject(proj.id, 'description', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all h-20"
+                        placeholder="Brief description of the project"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Tech Stack</label>
+                      <input 
+                        type="text" 
+                        value={proj.techStack}
+                        onChange={(e) => updateProject(proj.id, 'techStack', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                        placeholder="e.g. React, Node.js, PostgreSQL"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Project Link</label>
+                      <input 
+                        type="text" 
+                        value={proj.link}
+                        onChange={(e) => updateProject(proj.id, 'link', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                        placeholder="e.g. https://github.com/..."
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        );
+      case 'positions':
+        return (
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-800">Positions of Responsibility (Optional)</h3>
+              <button onClick={addPosition} className="btn-secondary px-4 py-2 text-xs flex items-center gap-2">
+                <Plus className="h-4 w-4" /> Add Position
+              </button>
+            </div>
+            <div className="space-y-4">
+              {data.positions.map((pos) => (
+                <div key={pos.id} className="rounded-2xl border border-slate-200 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 p-6">
+                  <button 
+                    onClick={() => removePosition(pos.id)}
+                    className="float-right text-slate-400 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Role/Position</label>
+                      <input 
+                        type="text" 
+                        value={pos.role}
+                        onChange={(e) => updatePosition(pos.id, 'role', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Organization/College</label>
+                      <input 
+                        type="text" 
+                        value={pos.organization}
+                        onChange={(e) => updatePosition(pos.id, 'organization', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Duration</label>
+                      <input 
+                        type="text" 
+                        value={pos.duration}
+                        onChange={(e) => updatePosition(pos.id, 'duration', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                        placeholder="e.g. 2023-2024"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Description of Duties</label>
+                      <textarea 
+                        value={pos.description}
+                        onChange={(e) => updatePosition(pos.id, 'description', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all h-20"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        );
+      case 'achievements':
+        return (
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-800">Achievements & Awards (Optional)</h3>
+              <button onClick={addAchievement} className="btn-secondary px-4 py-2 text-xs flex items-center gap-2">
+                <Plus className="h-4 w-4" /> Add Achievement
+              </button>
+            </div>
+            <div className="space-y-4">
+              {data.achievements.map((ach) => (
+                <div key={ach.id} className="rounded-2xl border border-slate-200 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 p-6">
+                  <button 
+                    onClick={() => removeAchievement(ach.id)}
+                    className="float-right text-slate-400 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="md:col-span-2">
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Achievement Title</label>
+                      <input 
+                        type="text" 
+                        value={ach.title}
+                        onChange={(e) => updateAchievement(ach.id, 'title', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Year</label>
+                      <input 
+                        type="text" 
+                        value={ach.year}
+                        onChange={(e) => updateAchievement(ach.id, 'year', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Description (Optional)</label>
+                      <input 
+                        type="text" 
+                        value={ach.description}
+                        onChange={(e) => updateAchievement(ach.id, 'description', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        );
+      case 'certifications':
+        return (
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-800">Certifications (Optional)</h3>
+              <button onClick={addCertification} className="btn-secondary px-4 py-2 text-xs flex items-center gap-2">
+                <Plus className="h-4 w-4" /> Add Certification
+              </button>
+            </div>
+            <div className="space-y-4">
+              {data.certifications.map((cert) => (
+                <div key={cert.id} className="rounded-2xl border border-slate-200 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 p-6">
+                  <button 
+                    onClick={() => removeCertification(cert.id)}
+                    className="float-right text-slate-400 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="md:col-span-2">
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Certificate Name</label>
+                      <input 
+                        type="text" 
+                        value={cert.name}
+                        onChange={(e) => updateCertification(cert.id, 'name', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Issuing Organization</label>
+                      <input 
+                        type="text" 
+                        value={cert.organization}
+                        onChange={(e) => updateCertification(cert.id, 'organization', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Year</label>
+                      <input 
+                        type="text" 
+                        value={cert.year}
+                        onChange={(e) => updateCertification(cert.id, 'year', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Credential Link (Optional)</label>
+                      <input 
+                        type="text" 
+                        value={cert.link}
+                        onChange={(e) => updateCertification(cert.id, 'link', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        );
       case 'skills':
         return (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
@@ -624,6 +1080,10 @@ export default function ResumeBuilder() {
                       personal={data.personal}
                       experience={data.experience}
                       education={data.education}
+                      projects={data.projects}
+                      positions={data.positions}
+                      achievements={data.achievements}
+                      certifications={data.certifications}
                       skills={data.skills}
                       summary={data.personal.summary}
                     />
