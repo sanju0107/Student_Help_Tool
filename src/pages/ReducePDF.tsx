@@ -26,6 +26,7 @@ export default function ReducePDF() {
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [compressionLevel, setCompressionLevel] = useState<'low' | 'medium' | 'high'>('medium');
   const [result, setResult] = useState<{ 
     url: string; 
     originalSize: number; 
@@ -54,14 +55,14 @@ export default function ReducePDF() {
     try {
       const arrayBuffer = await file.arrayBuffer();
       
-      // Use improved compression utility
-      const { blob, originalSize, compressedSize, ratio } = await compressPDF(arrayBuffer);
+      // Use improved compression utility with selected quality level
+      const { blob, originalSize, compressedSize, ratio } = await compressPDF(arrayBuffer, compressionLevel);
       
       // Check if compression actually happened
       if (ratio <= 0) {
         setError(
-          'This PDF could not be compressed further. The file is already well-optimized. ' +
-          'PDFs with text-only content have limited compression potential since they are typically already optimized.'
+          'This PDF is already optimized and cannot be reduced further. ' +
+          'PDFs with text-only content are typically already well-optimized and have limited compression potential.'
         );
         setIsProcessing(false);
         return;
@@ -155,12 +156,38 @@ export default function ReducePDF() {
                     </div>
 
                     {!result ? (
-                      <div className="flex flex-wrap gap-4 pt-8 border-t border-slate-100">
-                        <button
-                          onClick={processReduce}
-                          disabled={isProcessing}
-                          className="btn-primary flex-1 py-5 text-xl flex items-center justify-center gap-3"
-                        >
+                      <div className="space-y-6">
+                        <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200">
+                          <h3 className="text-sm font-black text-slate-700 uppercase tracking-widest mb-4">Compression Level</h3>
+                          <div className="grid grid-cols-3 gap-4">
+                            {[
+                              { value: 'low' as const, label: 'Low', desc: 'Better quality', icon: '⚡' },
+                              { value: 'medium' as const, label: 'Medium', desc: 'Balanced', icon: '⚙️' },
+                              { value: 'high' as const, label: 'High', desc: 'Smaller size', icon: '💨' }
+                            ].map(option => (
+                              <button
+                                key={option.value}
+                                onClick={() => setCompressionLevel(option.value)}
+                                className={`p-4 rounded-xl border-2 transition-all ${
+                                  compressionLevel === option.value
+                                    ? 'border-blue-500 bg-blue-50'
+                                    : 'border-slate-200 bg-white hover:border-slate-300'
+                                }`}
+                              >
+                                <div className="text-2xl mb-2">{option.icon}</div>
+                                <h4 className="font-black text-slate-900 text-sm">{option.label}</h4>
+                                <p className="text-xs text-slate-600 mt-1">{option.desc}</p>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-4 pt-4 border-t border-slate-100">
+                          <button
+                            onClick={processReduce}
+                            disabled={isProcessing}
+                            className="btn-primary flex-1 py-5 text-xl flex items-center justify-center gap-3"
+                          >
                           {isProcessing ? (
                             <>
                               <Loader2 className="h-5 w-5 animate-spin" />
@@ -175,6 +202,7 @@ export default function ReducePDF() {
                             Reset
                           </button>
                         )}
+                        </div>
                       </div>
                     ) : (
                       <motion.div 
