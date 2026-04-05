@@ -16,11 +16,11 @@ export { sanitizeText, validateText, validateEmail, validatePhone } from './vali
 export {
   isFileValid,
   validatePDFFileUpload,
+  validateMultiplePDFFiles,
   validateImageFileUpload,
   validateWordFileUpload,
   validateResumeFileUpload,
   getFirstError,
-  formatFileSize,
   getMaxFileSizeInfo,
   getAllowedFileTypes,
   type ValidationResult,

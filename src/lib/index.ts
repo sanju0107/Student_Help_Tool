@@ -16,7 +16,6 @@ export * from './pdfUtils';
 // Security & Validation
 export * from './security';
 export * from './security/fileValidation';
-export * from './security/fileUploadValidation';
 export * from './security/validation';
 export * from './security/sanitization';
 export * from './security/safeRendering';
