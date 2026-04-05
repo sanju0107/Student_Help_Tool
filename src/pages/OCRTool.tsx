@@ -22,6 +22,7 @@ import { FileUpload } from '../components/FileUpload';
 import RelatedTools from '../components/RelatedTools';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
+import { validateImageFileUpload, getFirstError } from '../lib';
 import { TOOLS } from '../constants';
 import confetti from 'canvas-confetti';
 
@@ -47,8 +48,10 @@ export default function OCRTool() {
   const [error, setError] = useState<string | null>(null);
 
   const handleFileSelect = (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      setError('Please upload a valid image file.');
+    const validation = validateImageFileUpload(file);
+    
+    if (!validation.valid) {
+      setError(getFirstError(validation) || 'Invalid image file');
       return;
     }
     const reader = new FileReader();

@@ -20,6 +20,7 @@ import { FileUpload } from '../components/FileUpload';
 import RelatedTools from '../components/RelatedTools';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
+import { validateImageFileUpload, getFirstError } from '../lib';
 import { TOOLS } from '../constants';
 
 export default function BackgroundRemover() {
@@ -44,12 +45,10 @@ export default function BackgroundRemover() {
   const [success, setSuccess] = useState(false);
 
   const handleFileSelect = (selectedFile: File) => {
-    if (!selectedFile.type.startsWith('image/')) {
-      setError('Please select a valid image file.');
-      return;
-    }
-    if (selectedFile.size > 10 * 1024 * 1024) {
-      setError('File size too large. Please select an image under 10MB.');
+    const validation = validateImageFileUpload(selectedFile);
+    
+    if (!validation.valid) {
+      setError(getFirstError(validation) || 'Invalid image file');
       return;
     }
     setFile(selectedFile);

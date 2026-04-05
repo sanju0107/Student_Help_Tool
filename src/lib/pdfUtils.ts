@@ -9,8 +9,18 @@ import { Document, Packer, Paragraph, TextRun, PageBreak } from 'docx';
 import * as mammoth from 'mammoth';
 import jsPDF from 'jspdf';
 
-// Set up PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+// Set up PDF.js worker with reliable CDN
+// Uses jsdelivr CDN which is production-ready and handles versioning properly
+const initializePDFWorker = () => {
+  try {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 
+      `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+  } catch (e) {
+    console.error('Failed to initialize PDF worker:', e);
+  }
+};
+
+initializePDFWorker();
 
 /**
  * Represents a file size with formatting
@@ -89,7 +99,6 @@ export const compressPDF = async (
     // Save with optimization flags
     const pdfBytes = await pdfDoc.save({
       useObjectStreams: true,
-      objectsPerStream: 50,
     });
     
     // Convert Uint8Array to ArrayBuffer for Blob compatibility
@@ -164,7 +173,11 @@ const compressPDFImagesWithCanvas = async (
       if (!context) continue;
       
       try {
-        await page.render({ canvasContext: context, viewport }).promise;
+        await page.render({ 
+          canvasContext: context, 
+          viewport,
+          canvas: canvas
+        }).promise;
         
         // Convert canvas to JPEG to reduce file size further
         const imgData = canvas.toDataURL('image/jpeg', quality / 100);
@@ -385,7 +398,10 @@ export const convertPDFToWord = async (pdfArrayBuffer: ArrayBuffer): Promise<Blo
       
       for (const item of textContent.items) {
         if ('str' in item) {
-          const y = Math.round(item.y);
+          // Extract Y position from item - it may be in different places depending on PDF.js version
+          const itemY = (item as any).y !== undefined ? (item as any).y : 
+                        ((item as any).transform?.[5] !== undefined ? (item as any).transform[5] : 0);
+          const y = Math.round(itemY);
           const existingLine = lines.find(l => Math.abs(l.y - y) < 5);
           
           if (existingLine) {

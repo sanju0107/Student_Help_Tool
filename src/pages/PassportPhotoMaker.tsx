@@ -23,6 +23,7 @@ import { FileUpload } from '../components/FileUpload';
 import RelatedTools from '../components/RelatedTools';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
+import { validateImageFileUpload, getFirstError } from '../lib';
 import { TOOLS } from '../constants';
 
 export default function PassportPhotoMaker() {
@@ -51,8 +52,10 @@ export default function PassportPhotoMaker() {
   }, []);
 
   const handleFileSelect = (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      setError('Please select a valid image file (JPG, PNG, WebP).');
+    const validation = validateImageFileUpload(file);
+    
+    if (!validation.valid) {
+      setError(getFirstError(validation) || 'Invalid image file');
       return;
     }
     const reader = new FileReader();

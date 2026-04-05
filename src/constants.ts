@@ -15,7 +15,11 @@ import {
   Eraser,
   ArrowRightLeft,
   Cake,
-  ScanText
+  ScanText,
+  BarChart3,
+  Target,
+  BookOpen,
+  DollarSign
 } from 'lucide-react';
 
 export interface Step {
@@ -38,7 +42,7 @@ export interface Tool {
   description: string;
   longDescription: string;
   icon: any;
-  category: 'image' | 'pdf' | 'student' | 'ai';
+  category: 'image' | 'pdf' | 'student' | 'ai' | 'career';
   path: string;
   
   // SEO Metadata
@@ -52,13 +56,17 @@ export interface Tool {
   howToSteps: Step[];
   useCases: UseCase[];
   faqItems: FAQItem[];
+  
+  // UI Enhancement
+  badges?: string[];
 }
 
 export const TOOLS: Tool[] = [
   {
     id: 'image-compressor',
-    name: 'Image Compressor',
-    description: 'Reduce file size (KB) by adjusting quality.',
+    name: 'Compress Images Instantly',
+    description: 'Reduce image file size while maintaining quality.',
+    badges: ['Fast', 'Lossless', 'Free'],
     longDescription: 'Professional image compression tool that reduces file size without changing dimensions. Ideal for optimizing web assets and storage.',
     icon: Minimize2,
     category: 'image',
@@ -436,8 +444,9 @@ export const TOOLS: Tool[] = [
   // PDF Tools
   {
     id: 'merge-pdf',
-    name: 'Merge PDF',
-    description: 'Combine multiple PDFs into one.',
+    name: 'Merge PDFs Easily',
+    description: 'Combine multiple PDF files into one seamless document.',
+    badges: ['Drag & Drop', 'Reorder', 'No Limits'],
     longDescription: 'Combine multiple PDF documents into a single file. Perfect for merging marksheets and certificates.',
     icon: FileStack,
     category: 'pdf',
@@ -544,8 +553,9 @@ export const TOOLS: Tool[] = [
   },
   {
     id: 'reduce-pdf',
-    name: 'Reduce PDF Size',
-    description: 'Compress PDF file size.',
+    name: 'Shrink PDFs Instantly',
+    description: 'Compress PDFs to smaller sizes without losing quality.',
+    badges: ['3 Levels', 'Real Compression', 'Quality Control'],
     longDescription: 'Reduce the file size of your PDF documents without losing quality. Ideal for email attachments and uploads.',
     icon: Minimize2,
     category: 'pdf',
@@ -877,60 +887,6 @@ export const TOOLS: Tool[] = [
   },
   // AI Tools
   {
-    id: 'ocr-tool',
-    name: 'Image to Text (OCR)',
-    description: 'Extract editable text from images.',
-    longDescription: 'AI-powered text extraction from screenshots and documents. Edit and download as text files.',
-    icon: ScanText,
-    category: 'ai',
-    path: '/ocr-tool',
-    seoTitle: 'Online OCR Tool - Extract Text From Images',
-    seoDescription: 'Extract text from images instantly using AI-powered OCR. Convert screenshots, PDFs to editable text online free.',
-    seoKeywords: ['ocr tool', 'extract text from image', 'image to text', 'ocr converter', 'screenshot to text'],
-    slug: 'ocr-tool',
-    intro: 'Extract text from images instantly with AI-powered Optical Character Recognition. Perfect for documents, screenshots, and scans.',
-    howToSteps: [
-      {
-        title: 'Upload Image',
-        description: 'Choose your image or screenshot'
-      },
-      {
-        title: 'AI Processing',
-        description: 'Our OCR processes and extracts text'
-      },
-      {
-        title: 'Review Text',
-        description: 'Check the extracted text for accuracy'
-      },
-      {
-        title: 'Download or Copy',
-        description: 'Copy or download as text file'
-      }
-    ],
-    useCases: [
-      { title: 'Document Digitization' },
-      { title: 'Screenshot Conversion' },
-      { title: 'Text Extraction' },
-      { title: 'Data Entry Automation' },
-      { title: 'Receipt Scanning' },
-      { title: 'Book Scanning' }
-    ],
-    faqItems: [
-      {
-        question: 'How accurate is the OCR?',
-        answer: 'Our OCR is highly accurate for clear text. Blurry or unusual fonts may have lower accuracy.'
-      },
-      {
-        question: 'What languages are supported?',
-        answer: 'We support multiple languages. Detection is automatic for most common languages.'
-      },
-      {
-        question: 'Can I extract text from handwriting?',
-        answer: 'Our OCR works best with printed text. Handwriting recognition is limited.'
-      }
-    ]
-  },
-  {
     id: 'resume-builder',
     name: 'AI Resume Builder',
     description: 'Create a professional resume in minutes.',
@@ -1035,6 +991,277 @@ export const TOOLS: Tool[] = [
       {
         question: 'What if the letter is too long?',
         answer: 'Most cover letters are 3-4 paragraphs. Trim to fit requirements while keeping key points.'
+      }
+    ]
+  },
+  {
+    id: 'ocr-tool',
+    name: 'Image to Text (OCR)',
+    description: 'Extract editable text from images.',
+    longDescription: 'AI-powered text extraction from screenshots and documents. Edit and download as text files.',
+    icon: ScanText,
+    category: 'ai',
+    path: '/ocr-tool',
+    seoTitle: 'Online OCR Tool - Extract Text From Images',
+    seoDescription: 'Extract text from images instantly using AI-powered OCR. Convert screenshots, PDFs to editable text online free.',
+    seoKeywords: ['ocr tool', 'extract text from image', 'image to text', 'ocr converter', 'screenshot to text'],
+    slug: 'ocr-tool',
+    intro: 'Extract text from images instantly with AI-powered Optical Character Recognition. Perfect for documents, screenshots, and scans.',
+    howToSteps: [
+      {
+        title: 'Upload Image',
+        description: 'Choose your image or screenshot'
+      },
+      {
+        title: 'AI Processing',
+        description: 'Our OCR processes and extracts text'
+      },
+      {
+        title: 'Review Text',
+        description: 'Check the extracted text for accuracy'
+      },
+      {
+        title: 'Download or Copy',
+        description: 'Copy or download as text file'
+      }
+    ],
+    useCases: [
+      { title: 'Document Digitization' },
+      { title: 'Screenshot Conversion' },
+      { title: 'Text Extraction' },
+      { title: 'Data Entry Automation' },
+      { title: 'Receipt Scanning' },
+      { title: 'Book Scanning' }
+    ],
+    faqItems: [
+      {
+        question: 'How accurate is the OCR?',
+        answer: 'Our OCR is highly accurate for clear text. Blurry or unusual fonts may have lower accuracy.'
+      },
+      {
+        question: 'What languages are supported?',
+        answer: 'We support multiple languages. Detection is automatic for most common languages.'
+      },
+      {
+        question: 'Can I extract text from handwriting?',
+        answer: 'Our OCR works best with printed text. Handwriting recognition is limited.'
+      }
+    ]
+  },
+  // Career Tools
+  {
+    id: 'resume-ats-checker',
+    name: 'Resume ATS Checker',
+    description: 'Analyze resume for ATS-friendliness',
+    longDescription: 'Get an ATS-readiness score and actionable suggestions to optimize your resume for applicant tracking systems.',
+    icon: BarChart3,
+    category: 'career',
+    path: '/career/resume-ats-checker',
+    seoTitle: 'Resume ATS Checker | Free Online Tool',
+    seoDescription: 'Analyze your resume for ATS-friendliness. Get an ATS score, section completeness check, and actionable suggestions to improve compatibility with applicant tracking systems.',
+    seoKeywords: ['resume ats checker', 'ats score', 'resume optimization', 'applicant tracking system'],
+    slug: 'resume-ats-checker',
+    intro: 'Get an ATS-readiness estimate and actionable suggestions to improve your resume\'s compatibility with applicant tracking systems.',
+    howToSteps: [
+      {
+        title: 'Paste or Upload Resume',
+        description: 'Enter your resume text or upload a PDF/DOCX/TXT file'
+      },
+      {
+        title: 'Add Target Job Title',
+        description: 'Optional: Enter the job title you\'re applying for'
+      },
+      {
+        title: 'Analyze',
+        description: 'Our tool checks your resume against ATS standards'
+      },
+      {
+        title: 'Review Recommendations',
+        description: 'Get specific suggestions to improve your ATS score'
+      }
+    ],
+    useCases: [
+      { title: 'Job Applications' },
+      { title: 'Resume Optimization' },
+      { title: 'ATS Preparation' },
+      { title: 'Section Review' },
+      { title: 'Formatting Check' },
+      { title: 'Keyword Analysis' }
+    ],
+    faqItems: [
+      {
+        question: 'What is an ATS?',
+        answer: 'ATS (Applicant Tracking System) is software used by recruiters to automatically parse and filter resumes.'
+      },
+      {
+        question: 'Is this a real ATS?',
+        answer: 'No, this is an estimate based on common ATS-friendly practices. Real systems are proprietary and more complex.'
+      },
+      {
+        question: 'What score should I aim for?',
+        answer: 'Aim for 75+ to ensure your resume passes most ATS systems. Focus on critical issues first.'
+      }
+    ]
+  },
+  {
+    id: 'resume-job-matcher',
+    name: 'Resume vs Job Matcher',
+    description: 'Match resume against job description',
+    longDescription: 'Compare your resume against a job description to see matching skills, missing keywords, and targeted improvement recommendations.',
+    icon: Target,
+    category: 'career',
+    path: '/career/resume-job-matcher',
+    seoTitle: 'Resume vs Job Matcher | Free Online Tool',
+    seoDescription: 'Compare your resume against a job description. See matching skills, missing keywords, and get specific recommendations to improve your match score.',
+    seoKeywords: ['resume matcher', 'job description analyzer', 'resume optimization', 'job matching'],
+    slug: 'resume-job-matcher',
+    intro: 'Compare your resume against a job description and get a match score with targeted recommendations.',
+    howToSteps: [
+      {
+        title: 'Paste or Upload Resume',
+        description: 'Enter your resume text or upload a file'
+      },
+      {
+        title: 'Paste Job Description',
+        description: 'Enter the job posting you\'re interested in'
+      },
+      {
+        title: 'Calculate Match',
+        description: 'Our tool compares keywords and requirements'
+      },
+      {
+        title: 'Review Results',
+        description: 'See matched skills and gaps to address'
+      }
+    ],
+    useCases: [
+      { title: 'Job Applications' },
+      { title: 'Resume Tailoring' },
+      { title: 'Skill Matching' },
+      { title: 'Gap Analysis' },
+      { title: 'Career Planning' },
+      { title: 'Job Fit Assessment' }
+    ],
+    faqItems: [
+      {
+        question: 'How is match score calculated?',
+        answer: 'We analyze keyword overlap (40%), requirements coverage (35%), and qualitative factors like experience (25%).'
+      },
+      {
+        question: 'What if my match score is low?',
+        answer: 'Review the "Missing Keywords" section to see what skills to highlight or learn.'
+      },
+      {
+        question: 'Should I customize my resume for each job?',
+        answer: 'Yes! Tailoring your resume for each job using keywords significantly improves your chances.'
+      }
+    ]
+  },
+  {
+    id: 'job-description-analyzer',
+    name: 'Job Description Analyzer',
+    description: 'Break down job postings into insights',
+    longDescription: 'Analyze job descriptions to extract key skills, tools, responsibilities, and get resume optimization tips based on what recruiters are looking for.',
+    icon: BookOpen,
+    category: 'career',
+    path: '/career/job-description-analyzer',
+    seoTitle: 'Job Description Analyzer | Free Online Tool',
+    seoDescription: 'Analyze job descriptions to find key skills, tools, responsibilities, and get resume optimization tips. Understand what recruiters are looking for.',
+    seoKeywords: ['job description analyzer', 'job analyzer', 'skill extraction', 'job posting analysis'],
+    slug: 'job-description-analyzer',
+    intro: 'Analyze job descriptions to extract key skills, tools, responsibilities, and get insights on what recruiters are looking for.',
+    howToSteps: [
+      {
+        title: 'Paste Job Description',
+        description: 'Enter the complete job posting or job description'
+      },
+      {
+        title: 'Analyze',
+        description: 'Our tool extracts skills, tools, and responsibilities'
+      },
+      {
+        title: 'Review Insights',
+        description: 'See key requirements and recruiter priorities'
+      },
+      {
+        title: 'Optimize Resume',
+        description: 'Use tips to tailor your resume for this job'
+      }
+    ],
+    useCases: [
+      { title: 'Job Analysis' },
+      { title: 'Resume Tailoring' },
+      { title: 'Skill Assessment' },
+      { title: 'Career Planning' },
+      { title: 'Job Requirements' },
+      { title: 'Recruitment Analysis' }
+    ],
+    faqItems: [
+      {
+        question: 'How accurate is the skill extraction?',
+        answer: 'We identify common industry skills using pattern matching. More complete job descriptions yield better results.'
+      },
+      {
+        question: 'Should I have all listed skills?',
+        answer: 'No. Usually having 70-80% of required skills is competitive. Focus on critical skills first.'
+      },
+      {
+        question: 'How should I use recruiter focus points?',
+        answer: 'Use these insights to tailor your cover letter and resume to emphasize what the recruiter cares about most.'
+      }
+    ]
+  },
+  {
+    id: 'salary-estimator',
+    name: 'Salary Estimator',
+    description: 'Estimate salary by role and experience',
+    longDescription: 'Get an estimated salary range based on your job title, experience, location, industry, and company type.',
+    icon: DollarSign,
+    category: 'career',
+    path: '/career/salary-estimator',
+    seoTitle: 'Salary Estimator | Free Career Salary Calculator',
+    seoDescription: 'Estimate your salary based on job title, experience, location, industry, and company type. Get a realistic salary range for your role.',
+    seoKeywords: ['salary estimator', 'salary calculator', 'job salary', 'career salary', 'wage estimator'],
+    slug: 'salary-estimator',
+    intro: 'Get an estimated salary range based on your job title, experience, location, and industry.',
+    howToSteps: [
+      {
+        title: 'Job Title',
+        description: 'Enter your job title or the role you\'re interested in'
+      },
+      {
+        title: 'Experience',
+        description: 'Specify your years of experience'
+      },
+      {
+        title: 'Details',
+        description: 'Add location, industry, and company size'
+      },
+      {
+        title: 'Estimate',
+        description: 'Get your salary range and compensation factors'
+      }
+    ],
+    useCases: [
+      { title: 'Salary Negotiation' },
+      { title: 'Career Planning' },
+      { title: 'Job Comparison' },
+      { title: 'Offer Evaluation' },
+      { title: 'Market Research' },
+      { title: 'Compensation Analysis' }
+    ],
+    faqItems: [
+      {
+        question: 'How is this estimate calculated?',
+        answer: 'We use base salaries for each role and apply multipliers for location, industry, company size, and experience level.'
+      },
+      {
+        question: 'Is this accurate?',
+        answer: 'This is an estimate based on public data. Actual salaries vary based on negotiations, company, and individual factors.'
+      },
+      {
+        question: 'Does this include bonuses?',
+        answer: 'This estimates base salary only. Many roles include bonuses (10-50%) and equity that are not included here.'
       }
     ]
   },

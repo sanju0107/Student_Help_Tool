@@ -61,8 +61,11 @@ export default function PDFToWord() {
     setWarning(null);
 
     try {
+      // Get file as ArrayBuffer first
+      const arrayBuffer = await file.arrayBuffer();
+      
       // Check if PDF is scanned/image-based
-      const isScanned = await isScannedPDF(file.arrayBuffer());
+      const isScanned = await isScannedPDF(arrayBuffer);
       
       if (isScanned) {
         setWarning(
@@ -70,8 +73,6 @@ export default function PDFToWord() {
           'Consider using OCR service or the original document if available.'
         );
       }
-
-      const arrayBuffer = await file.arrayBuffer();
       const docxBlob = await convertPDFToWord(arrayBuffer);
       
       if (!docxBlob || docxBlob.size === 0) {
@@ -329,7 +330,7 @@ export default function PDFToWord() {
       </div>
 
       <div className="mt-16">
-        <RelatedTools />
+        <RelatedTools currentToolId="pdf-to-word" />
       </div>
       
       {toolData.faqItems && <FAQ items={toolData.faqItems} />}

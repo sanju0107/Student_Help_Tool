@@ -23,6 +23,7 @@ import { FileUpload } from '../components/FileUpload';
 import RelatedTools from '../components/RelatedTools';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
+import { validatePDFFileUpload, validateMultiplePDFFiles, getFirstError } from '../lib';
 import { TOOLS } from '../constants';
 
 export default function MergePDF() {
@@ -49,14 +50,19 @@ export default function MergePDF() {
   const [mergedPdfUrl, setMergedPdfUrl] = useState<string | null>(null);
 
   const handleFilesSelect = (selectedFiles: FileList) => {
-    const newFiles = Array.from(selectedFiles)
-      .filter(f => f.type === 'application/pdf')
-      .map(f => ({ id: Math.random().toString(36).substr(2, 9), file: f }));
+    const validationResults = validateMultiplePDFFiles(selectedFiles);
+    const invalidFiles = validationResults.filter(r => !r.valid);
     
-    if (newFiles.length === 0) {
-      setError('Please select only PDF files.');
+    // If any files are invalid, show error for first invalid file
+    if (invalidFiles.length > 0) {
+      const firstInvalid = invalidFiles[0];
+      setError(firstInvalid.errors.join(' '));
       return;
     }
+
+    const newFiles = Array.from(selectedFiles)
+      .map(f => ({ id: Math.random().toString(36).substr(2, 9), file: f }));
+    
     setFiles(prev => [...prev, ...newFiles]);
     setSuccess(false);
     setMergedPdfUrl(null);
@@ -64,10 +70,13 @@ export default function MergePDF() {
   };
 
   const handleFileSelect = (selectedFile: File) => {
-    if (selectedFile.type !== 'application/pdf') {
-      setError('Please select only PDF files.');
+    const validation = validatePDFFileUpload(selectedFile);
+    
+    if (!validation.valid) {
+      setError(getFirstError(validation) || 'Invalid PDF file');
       return;
     }
+
     setFiles(prev => [...prev, { id: Math.random().toString(36).substr(2, 9), file: selectedFile }]);
     setSuccess(false);
     setMergedPdfUrl(null);

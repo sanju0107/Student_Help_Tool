@@ -17,6 +17,7 @@ import { FileUpload } from '../components/FileUpload';
 import RelatedTools from '../components/RelatedTools';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
+import { validateWordFileUpload, getFirstError } from '../lib';
 import { TOOLS } from '../constants';
 import { convertWordToPDF, formatFileSize } from '../lib/pdfUtils';
 
@@ -42,9 +43,10 @@ export default function WordToPDF() {
   } | null>(null);
 
   const handleFileSelect = (selectedFile: File) => {
-    if (!['application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(selectedFile.type) &&
-        !selectedFile.name.endsWith('.docx')) {
-      setError('Please select a valid .docx (Word) file.');
+    const validation = validateWordFileUpload(selectedFile);
+    
+    if (!validation.valid) {
+      setError(getFirstError(validation) || 'Invalid Word document');
       return;
     }
     setFile(selectedFile);
@@ -256,7 +258,7 @@ export default function WordToPDF() {
       </div>
 
       <div className="mt-16">
-        <RelatedTools />
+        <RelatedTools currentToolId="word-to-pdf" />
       </div>
       
       {toolData.faqItems && <FAQ items={toolData.faqItems} />}

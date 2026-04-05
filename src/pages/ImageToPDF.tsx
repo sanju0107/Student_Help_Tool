@@ -21,6 +21,7 @@ import { FileUpload } from '../components/FileUpload';
 import RelatedTools from '../components/RelatedTools';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
+import { validateImageFileUpload, getFirstError } from '../lib';
 import { TOOLS } from '../constants';
 import { imagesToPDF, formatFileSize } from '../lib/pdfUtils';
 
@@ -50,6 +51,14 @@ export default function ImageToPDF() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (selectedFile: File) => {
+    const validation = validateImageFileUpload(selectedFile);
+    
+    if (!validation.valid) {
+      setError(getFirstError(validation) || 'Invalid image file');
+      return;
+    }
+
+    // ImageToPDF specifically supports JPG, PNG, WebP
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(selectedFile.type)) {
       setError('Please select only JPG, PNG, or WEBP images.');
       return;

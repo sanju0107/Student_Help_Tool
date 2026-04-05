@@ -8,6 +8,8 @@ interface ToolHeaderProps {
   icon: LucideIcon;
   iconColor?: string;
   iconBg?: string;
+  badge?: string;
+  badges?: string[];
 }
 
 export const ToolHeader: React.FC<ToolHeaderProps> = ({ 
@@ -15,19 +17,94 @@ export const ToolHeader: React.FC<ToolHeaderProps> = ({
   description, 
   icon: Icon, 
   iconColor = 'text-blue-600', 
-  iconBg = 'bg-blue-50' 
+  iconBg = 'bg-blue-50',
+  badge,
+  badges = []
 }) => {
+  const allBadges = badge ? [badge, ...badges] : badges;
+  const gradientBg = `linear-gradient(135deg, ${iconBg} 0%, rgba(59, 130, 246, 0.05) 100%)`;
+  
   return (
-    <div className="mb-12 text-center">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className={`mb-6 inline-flex h-20 w-20 items-center justify-center rounded-2xl ${iconBg} ${iconColor} shadow-lg shadow-blue-600/10`}
-      >
-        <Icon className="h-10 w-10" />
-      </motion.div>
-      <h1 className="mb-4 text-4xl font-black tracking-tight text-slate-900 sm:text-5xl">{title}</h1>
-      <p className="mx-auto max-w-2xl text-lg font-medium text-slate-500">{description}</p>
+    <div className="mb-16 relative overflow-hidden">
+      {/* Animated background */}
+      <div className="absolute inset-0 -z-10">
+        <motion.div
+          animate={{
+            background: [
+              'radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)',
+              'radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%)',
+              'radial-gradient(circle at 40% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 50%)',
+            ],
+          }}
+          transition={{ duration: 8, repeat: Infinity }}
+          className="absolute inset-0"
+        />
+      </div>
+
+      <div className="text-center py-8">
+        {/* Icon Container */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8, y: -20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="mb-8 inline-flex"
+        >
+          <div className={`relative inline-flex h-24 w-24 items-center justify-center rounded-2xl ${iconBg} ${iconColor} shadow-xl`}>
+            <motion.div
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="absolute inset-0 rounded-2xl opacity-30 bg-gradient-to-br"
+            />
+            <Icon className="h-12 w-12 relative z-10" />
+          </div>
+        </motion.div>
+
+        {/* Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          <h1 className="mb-3 text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-tight">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-600 to-slate-900">
+              {title}
+            </span>
+          </h1>
+        </motion.div>
+
+        {/* Description */}
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mx-auto max-w-3xl text-lg md:text-xl font-medium text-slate-600 mb-6"
+        >
+          {description}
+        </motion.p>
+
+        {/* Badges */}
+        {allBadges.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-wrap justify-center gap-2"
+          >
+            {allBadges.map((badgeText, idx) => (
+              <motion.span
+                key={idx}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4 + idx * 0.05 }}
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 text-xs font-bold text-blue-700 shadow-sm hover:shadow-md transition-all hover:scale-105"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                {badgeText}
+              </motion.span>
+            ))}
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, Copy, Download, Loader2, FileText, AlertCircle, CheckCircle2 } from 'lucide-react';
@@ -11,6 +11,16 @@ import { useSEO } from '../lib/useSEO';
 import { checkOpenAIKeyAvailability } from '../lib/apiKeyUtils';
 import { trackAiFeature, trackToolUsage } from '../lib/analytics';
 import { TOOLS } from '../constants';
+import { 
+  sanitizeText, 
+  validateText, 
+  validateEmail,
+  rateLimiters,
+  profileAsync,
+  logError,
+  categorizeError
+} from '../lib';
+import { useValidatedInput, useSanitizedInput, useAsyncOperation } from '../hooks/useValidation';
 
 export default function CoverLetterAI() {
   const toolData = TOOLS.find(t => t.id === 'cover-letter-ai')!;
@@ -47,12 +57,30 @@ export default function CoverLetterAI() {
   const isAPIConfigured = apiKeyStatus.isConfigured;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    // Sanitize input as user types
+    const sanitizedValue = sanitizeText(value);
+    setFormData({ ...formData, [name]: sanitizedValue });
   };
 
   const generateCoverLetter = async () => {
+    // Check for required fields
     if (!formData.jobTitle || !formData.companyName || !formData.fullName || !formData.email) {
       setError('Please fill in all required fields: Full Name, Email, Job Title, and Company Name.');
+      return;
+    }
+
+    // Validate email format
+    const emailValidation = validateEmail(formData.email);
+    if (!emailValidation.valid) {
+      setError(emailValidation.error);
+      return;
+    }
+
+    // Check rate limit for AI operations
+    if (!rateLimiters.aiOperation.consume()) {
+      setError('AI operation rate limit reached. Please wait a moment before trying again.');
+      trackAiFeature('cover_letter_generation', false);
       return;
     }
 
@@ -67,30 +95,43 @@ export default function CoverLetterAI() {
         return;
       }
 
-      const openai = new OpenAI({ 
-        apiKey: process.env.OPENAI_API_KEY,
-        dangerouslyAllowBrowser: true
-      });
-      
-      const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-      const applicantAddress = `${formData.address}\n${formData.city}, ${formData.state} ${formData.zipCode}`.trim();
+      // Profile the operation for performance tracking
+      const result = await profileAsync('cover_letter_generation', async () => {
+        const openai = new OpenAI({ 
+          apiKey: process.env.OPENAI_API_KEY,
+          dangerouslyAllowBrowser: true
+        });
+        
+        const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        // Sanitize all inputs to prevent injection attacks
+        const sanitizedName = sanitizeText(formData.fullName);
+        const sanitizedAddress = sanitizeText(formData.address);
+        const sanitizedCity = sanitizeText(formData.city);
+        const sanitizedEmail = sanitizeText(formData.email);
+        const sanitizedCompany = sanitizeText(formData.companyName);
+        const sanitizedJobTitle = sanitizeText(formData.jobTitle);
+        const sanitizedExperience = sanitizeText(formData.experience);
+        const sanitizedSkills = sanitizeText(formData.skills);
+        const sanitizedJobDesc = sanitizeText(formData.jobDescription);
+        
+        const applicantAddress = `${sanitizedAddress}\n${sanitizedCity}, ${formData.state} ${formData.zipCode}`.trim();
 
-      const prompt = `Generate a professional, concise cover letter with these EXACT details:
+        const prompt = `Generate a professional, concise cover letter with these EXACT details:
 
 LETTER HEADER (use EXACTLY as provided):
-Name: ${formData.fullName}
+Name: ${sanitizedName}
 Address: ${applicantAddress || '[Your Address]'}
-Email: ${formData.email}
+Email: ${sanitizedEmail}
 Date: ${today}
 
 HIRING MANAGER:
-Company: ${formData.companyName}
+Company: ${sanitizedCompany}
 
 JOB DETAILS:
-Job Title: ${formData.jobTitle}
-Experience: ${formData.experience || 'Not specified'}
-Skills: ${formData.skills || 'Not specified'}
-Job Description: ${formData.jobDescription || 'Not provided'}
+Job Title: ${sanitizedJobTitle}
+Experience: ${sanitizedExperience || 'Not specified'}
+Skills: ${sanitizedSkills || 'Not specified'}
+Job Description: ${sanitizedJobDesc || 'Not provided'}
 
 FORMAT & REQUIREMENTS:
 1. Start with applicant's full name on first line
@@ -108,18 +149,26 @@ FORMAT & REQUIREMENTS:
 13. Ready to send immediately to the company
 14. Professional and human-like tone`;
 
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7,
-      });
+        const response = await openai.chat.completions.create({
+          model: 'gpt-4o-mini',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.7,
+        });
 
-      setCoverLetter(response.choices[0].message.content || '');
+        return response.choices[0].message.content || '';
+      }, { operation: 'cover_letter', tool: 'cover-letter-ai' });
+
+      setCoverLetter(result);
       trackAiFeature('cover_letter_generation', true);
     } catch (err: any) {
       console.error('Cover letter generation error:', err);
-      const errorMessage = err?.message || 'Failed to generate cover letter. Please try again.';
-      setError(errorMessage);
+      
+      // Categorize error and provide user-friendly message
+      const { category, userMessage } = categorizeError(err);
+      setError(userMessage);
+      
+      // Log error for debugging
+      logError(err, 'CoverLetterAI-generation');
       trackAiFeature('cover_letter_generation', false);
     } finally {
       setIsGenerating(false);

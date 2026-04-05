@@ -7,6 +7,19 @@ export default function Layout() {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
+  // Handle smooth scrolling to sections with hash links
+  React.useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const element = document.getElementById(id);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    }
+  }, [location.hash, location.pathname]);
+
   return (
     <div className="flex min-h-screen flex-col bg-[#fcfcfd]">
       <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/90 backdrop-blur-md">
@@ -20,10 +33,10 @@ export default function Layout() {
           
           <nav className="hidden md:flex items-center gap-8">
             <Link to="/" className={`text-sm font-bold transition-colors ${location.pathname === '/' ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'}`}>Home</Link>
+            <Link to="/#professional-tools" className="text-sm font-bold text-slate-600 hover:text-blue-600">Professional</Link>
             <Link to="/#image-tools" className="text-sm font-bold text-slate-600 hover:text-blue-600">Image</Link>
             <Link to="/#pdf-tools" className="text-sm font-bold text-slate-600 hover:text-blue-600">PDF</Link>
             <Link to="/#student-tools" className="text-sm font-bold text-slate-600 hover:text-blue-600">Student</Link>
-            <Link to="/#ai-tools" className="text-sm font-bold text-slate-600 hover:text-blue-600">AI Tools</Link>
           </nav>
 
           <div className="flex items-center gap-4">
@@ -51,10 +64,10 @@ export default function Layout() {
             >
               <nav className="flex flex-col gap-4">
                 <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-slate-900">Home</Link>
+                <Link to="/#professional-tools" onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-slate-900">Professional Tools</Link>
                 <Link to="/#image-tools" onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-slate-900">Image Tools</Link>
                 <Link to="/#pdf-tools" onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-slate-900">PDF Tools</Link>
                 <Link to="/#student-tools" onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-slate-900">Student Tools</Link>
-                <Link to="/#ai-tools" onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-slate-900">AI Tools</Link>
                 <hr className="border-slate-100" />
                 <Link to="/about" onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-slate-900">About Us</Link>
               </nav>

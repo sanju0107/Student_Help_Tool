@@ -15,17 +15,13 @@ import {
   ArrowRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import * as pdfjsLib from 'pdfjs-dist';
-import { Document, Packer, Paragraph, TextRun } from 'docx';
 import { ToolHeader, ToolCard, ToolStep } from '../components/ToolUI';
 import { FileUpload } from '../components/FileUpload';
 import RelatedTools from '../components/RelatedTools';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
+import { validatePDFFileUpload, getFirstError, convertPDFToWord } from '../lib';
 import { TOOLS } from '../constants';
-
-// Set up PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 
 export default function DocConverter() {
   const toolData = TOOLS.find(t => t.id === 'pdf-to-word')!;
@@ -45,8 +41,10 @@ export default function DocConverter() {
   const [resultBlob, setResultBlob] = useState<Blob | null>(null);
 
   const handleFileSelect = (selectedFile: File) => {
-    if (selectedFile.type !== 'application/pdf') {
-      setError('Please select a valid PDF file.');
+    const validation = validatePDFFileUpload(selectedFile);
+    
+    if (!validation.valid) {
+      setError(getFirstError(validation) || 'Invalid PDF file');
       return;
     }
     setFile(selectedFile);
@@ -62,33 +60,9 @@ export default function DocConverter() {
 
     try {
       const arrayBuffer = await file.arrayBuffer();
-      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-      const pdf = await loadingTask.promise;
       
-      const docSections = [];
-      
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const textContent = await page.getTextContent();
-        const textItems = textContent.items.map((item: any) => item.str).join(' ');
-        
-        docSections.push({
-          properties: {},
-          children: [
-            new Paragraph({
-              children: [
-                new TextRun(textItems),
-              ],
-            }),
-          ],
-        });
-      }
-
-      const doc = new Document({
-        sections: docSections,
-      });
-
-      const blob = await Packer.toBlob(doc);
+      // Use the robust PDF to Word conversion from pdfUtils
+      const blob = await convertPDFToWord(arrayBuffer);
       setResultBlob(blob);
       
       confetti({
@@ -99,7 +73,24 @@ export default function DocConverter() {
       });
     } catch (err) {
       console.error(err);
-      setError('Failed to convert PDF. The file might be complex or protected.');
+      let userMessage = 'Failed to convert PDF. ';
+      
+      if (err instanceof Error) {
+        const errorMsg = err.message.toLowerCase();
+        if (errorMsg.includes('scanned') || errorMsg.includes('image')) {
+          userMessage = 'This PDF appears to be scanned or image-based. Text extraction may not work well. Try an OCR tool instead.';
+        } else if (errorMsg.includes('protected')) {
+          userMessage = 'This PDF is protected or encrypted. Please remove the protection first.';
+        } else if (errorMsg.includes('corrupted') || errorMsg.includes('invalid')) {
+          userMessage = 'The PDF file appears to be corrupted. Please verify and try again.';
+        } else {
+          userMessage += err.message;
+        }
+      } else {
+        userMessage += 'Unknown error occurred.';
+      }
+      
+      setError(userMessage);
     } finally {
       setIsProcessing(false);
     }

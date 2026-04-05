@@ -9,6 +9,7 @@ import { FileUpload } from '../components/FileUpload';
 import RelatedTools from '../components/RelatedTools';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
+import { validatePDFFileUpload, getFirstError } from '../lib';
 import { TOOLS } from '../constants';
 
 export default function SplitPDF() {
@@ -31,8 +32,10 @@ export default function SplitPDF() {
   const [success, setSuccess] = useState(false);
 
   const handleFileSelect = async (selectedFile: File) => {
-    if (selectedFile.type !== 'application/pdf') {
-      setError('Please select a valid PDF file.');
+    const validation = validatePDFFileUpload(selectedFile);
+    
+    if (!validation.valid) {
+      setError(getFirstError(validation) || 'Invalid PDF file');
       return;
     }
     

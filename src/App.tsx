@@ -10,6 +10,7 @@ import { Loader2 } from 'lucide-react';
 import Layout from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { usePageTracking } from './lib/usePageTracking';
+import { SecurityContextProvider } from './lib/security/securityContext.tsx';
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -56,6 +57,10 @@ const AgeCalculator = lazy(() => import('./pages/AgeCalculator'));
 const OCRTool = lazy(() => import('./pages/OCRTool'));
 const ResumeBuilder = lazy(() => import('./pages/ResumeBuilder'));
 const CoverLetterAI = lazy(() => import('./pages/CoverLetterAI'));
+const ResumeATSChecker = lazy(() => import('./pages/ResumeATSChecker'));
+const ResumeJobMatcher = lazy(() => import('./pages/ResumeJobMatcher'));
+const JobDescriptionAnalyzer = lazy(() => import('./pages/JobDescriptionAnalyzer'));
+const SalaryEstimator = lazy(() => import('./pages/SalaryEstimator'));
 const About = lazy(() => import('./pages/About'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
@@ -73,10 +78,18 @@ export default function App() {
   const getToolData = (id: string) => TOOLS.find(t => t.id === id)!;
 
   return (
-    <HelmetProvider>
-      <Router>
-        <ErrorBoundary>
-          <Suspense fallback={<LoadingSpinner />}>
+    <SecurityContextProvider
+      config={{
+        enableCsp: true,
+        logViolations: process.env.NODE_ENV === 'development',
+        enableXssProtection: true,
+        defaultSanitizationLevel: 'moderate',
+      }}
+    >
+      <HelmetProvider>
+        <Router>
+          <ErrorBoundary>
+            <Suspense fallback={<LoadingSpinner />}>
             <Routes>
               <Route path="/" element={<Layout />}>
                 <Route index element={<Home />} />
@@ -161,6 +174,24 @@ export default function App() {
               element={<CoverLetterAI />} 
             />
 
+            {/* Career Tools */}
+            <Route 
+              path="/career/resume-ats-checker" 
+              element={<ResumeATSChecker />} 
+            />
+            <Route 
+              path="/career/resume-job-matcher" 
+              element={<ResumeJobMatcher />} 
+            />
+            <Route 
+              path="/career/job-description-analyzer" 
+              element={<JobDescriptionAnalyzer />} 
+            />
+            <Route 
+              path="/career/salary-estimator" 
+              element={<SalaryEstimator />} 
+            />
+
             {/* Static Pages */}
             <Route path="/about" element={<About />} />
             <Route path="/privacy" element={<Privacy />} />
@@ -170,11 +201,12 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
-      </Suspense>
-    </ErrorBoundary>
-    <ScrollToTop />
-    <PageTracker />
-  </Router>
-</HelmetProvider>
+              </Suspense>
+          </ErrorBoundary>
+          <ScrollToTop />
+          <PageTracker />
+        </Router>
+      </HelmetProvider>
+    </SecurityContextProvider>
   );
 }

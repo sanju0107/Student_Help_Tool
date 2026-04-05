@@ -1,6 +1,11 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+// Re-export patterns and guides
+export * from './toolOperationPatterns';
+export * from './errorHandlingGuide';
+export * from './validationPatterns';
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

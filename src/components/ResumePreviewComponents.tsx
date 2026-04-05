@@ -52,12 +52,14 @@ export function ResumeExperienceItem({
   position,
   company,
   duration,
+  location,
   description,
   bulletPoints = []
 }: {
   position: string;
   company: string;
   duration?: string;
+  location?: string;
   description?: string;
   bulletPoints?: string[];
 }) {
@@ -68,9 +70,9 @@ export function ResumeExperienceItem({
           {position}
           {company && <span className="font-normal"> — {company}</span>}
         </span>
-        {duration && (
+        {(duration || location) && (
           <span className="text-xs text-slate-600 ml-2 flex-shrink-0">
-            {duration}
+            {[duration, location].filter(Boolean).join(' | ')}
           </span>
         )}
       </div>
@@ -154,8 +156,8 @@ export function ResumeSkillsSection({
     );
   }
   
-  const skillList = Array.isArray(skills) 
-    ? skills.filter(s => typeof s === 'string' && s.trim())
+  const skillList: string[] = Array.isArray(skills) 
+    ? (skills as any[]).filter(s => typeof s === 'string' && s.trim())
     : [];
   
   if (layout === 'inline') {
@@ -309,6 +311,7 @@ export function ProfessionalResumePreview({
     position: string;
     company: string;
     duration?: string;
+    location?: string;
     description?: string;
     bulletPoints?: string[];
   }>;
@@ -317,6 +320,7 @@ export function ProfessionalResumePreview({
     degree: string;
     school: string;
     year?: string;
+    cgpa?: string;
     gpa?: string;
   }>;
   projects?: Array<{
@@ -382,6 +386,7 @@ export function ProfessionalResumePreview({
                   position={exp.position || ''}
                   company={exp.company || ''}
                   duration={exp.duration}
+                  location={exp.location}
                   description={exp.description}
                 />
               )
@@ -402,6 +407,7 @@ export function ProfessionalResumePreview({
                   degree={edu.degree || ''}
                   school={edu.school || ''}
                   year={edu.year}
+                  gpa={edu.cgpa || edu.gpa}
                 />
               )
             ))}

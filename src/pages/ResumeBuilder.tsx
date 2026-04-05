@@ -43,8 +43,8 @@ interface ResumeData {
     website: string;
     summary: string;
   };
-  experience: { id: string; company: string; position: string; duration: string; description: string }[];
-  education: { id: string; school: string; degree: string; year: string }[];
+  experience: { id: string; company: string; position: string; duration: string; location: string; description: string }[];
+  education: { id: string; school: string; degree: string; year: string; cgpa: string }[];
   projects: { id: string; title: string; description: string; techStack: string; link: string }[];
   positions: { id: string; role: string; organization: string; duration: string; description: string }[];
   achievements: { id: string; title: string; description: string; year: string }[];
@@ -81,8 +81,8 @@ export default function ResumeBuilder() {
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<ResumeData>({
     personal: { name: '', email: '', phone: '', location: '', website: '', summary: '' },
-    experience: [{ id: '1', company: '', position: '', duration: '', description: '' }],
-    education: [{ id: '1', school: '', degree: '', year: '' }],
+    experience: [{ id: '1', company: '', position: '', duration: '', location: '', description: '' }],
+    education: [{ id: '1', school: '', degree: '', year: '', cgpa: '' }],
     projects: [{ id: '1', title: '', description: '', techStack: '', link: '' }],
     positions: [{ id: '1', role: '', organization: '', duration: '', description: '' }],
     achievements: [{ id: '1', title: '', description: '', year: '' }],
@@ -106,7 +106,7 @@ export default function ResumeBuilder() {
   const addExperience = () => {
     setData({
       ...data,
-      experience: [...data.experience, { id: Date.now().toString(), company: '', position: '', duration: '', description: '' }]
+      experience: [...data.experience, { id: Date.now().toString(), company: '', position: '', duration: '', location: '', description: '' }]
     });
   };
 
@@ -124,7 +124,7 @@ export default function ResumeBuilder() {
   const addEducation = () => {
     setData({
       ...data,
-      education: [...data.education, { id: Date.now().toString(), school: '', degree: '', year: '' }]
+      education: [...data.education, { id: Date.now().toString(), school: '', degree: '', year: '', cgpa: '' }]
     });
   };
 
@@ -383,12 +383,13 @@ export default function ResumeBuilder() {
           const jobLine = `${exp.position} — ${exp.company}`.substring(0, 80);
           doc.text(jobLine, margin, y);
           
-          // Duration on the right
-          if (exp.duration) {
+          // Duration and location on the right
+          if (exp.duration || exp.location) {
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(9);
             doc.setTextColor(100, 116, 139);
-            doc.text(exp.duration, pageWidth - margin - 20, y, { align: 'right' });
+            const durationLocation = [exp.duration, exp.location].filter(Boolean).join(' | ');
+            doc.text(durationLocation, pageWidth - margin - 20, y, { align: 'right' });
           }
           y += 5;
 
@@ -421,12 +422,13 @@ export default function ResumeBuilder() {
           const eduLine = `${edu.degree}${edu.school ? ' — ' + edu.school : ''}`.substring(0, 80);
           doc.text(eduLine, margin, y);
           
-          // Year on the right
-          if (edu.year) {
+          // Year and CGPA on the right
+          if (edu.year || edu.cgpa) {
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(9);
             doc.setTextColor(100, 116, 139);
-            doc.text(edu.year, pageWidth - margin - 20, y, { align: 'right' });
+            const yearCgpa = [edu.year, edu.cgpa ? `CGPA: ${edu.cgpa}` : ''].filter(Boolean).join(' | ');
+            doc.text(yearCgpa, pageWidth - margin - 20, y, { align: 'right' });
           }
           y += 6;
         });
@@ -706,7 +708,17 @@ export default function ResumeBuilder() {
                         className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
                       />
                     </div>
-                    <div className="md:col-span-2">
+                    <div>
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Work Location</label>
+                      <input 
+                        type="text"
+                        placeholder="e.g. New York, Remote, Bangalore"
+                        value={exp.location}
+                        onChange={(e) => updateExperience(exp.id, 'location', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                      />
+                    </div>
+                    <div>
                       <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Duration</label>
                       <input 
                         type="text" 
@@ -773,6 +785,16 @@ export default function ResumeBuilder() {
                         type="text" 
                         value={edu.year}
                         onChange={(e) => updateEducation(edu.id, 'year', e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">CGPA</label>
+                      <input 
+                        type="text"
+                        placeholder="e.g. 7.5, 8.2/10"
+                        value={edu.cgpa}
+                        onChange={(e) => updateEducation(edu.id, 'cgpa', e.target.value)}
                         className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none transition-all"
                       />
                     </div>
@@ -1141,9 +1163,10 @@ export default function ResumeBuilder() {
           </div>
 
         <ToolHeader 
-          title="Resume & Cover Letter Builder"
-          description="Build your career with AI-powered professional documents in minutes. Tailored for Indian job seekers and students."
+          title="Build Your Career Path"
+          description="Craft professional resumes and cover letters with AI-powered suggestions. Create job-winning documents in minutes."
           icon={Layout}
+          badges={['AI-Powered', 'Free Download', 'ATS-Friendly']}
         />
 
         {/* API Key Status Warning */}

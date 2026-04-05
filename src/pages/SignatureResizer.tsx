@@ -10,6 +10,7 @@ import { FileUpload } from '../components/FileUpload';
 import RelatedTools from '../components/RelatedTools';
 import FAQ from '../components/FAQ';
 import { useSEO } from '../lib/useSEO';
+import { validateImageFileUpload, getFirstError } from '../lib';
 import { TOOLS } from '../constants';
 
 export default function SignatureResizer() {
@@ -41,8 +42,10 @@ export default function SignatureResizer() {
   }, []);
 
   const handleFileSelect = (selectedFile: File) => {
-    if (!selectedFile.type.startsWith('image/')) {
-      setError('Please upload a valid image file.');
+    const validation = validateImageFileUpload(selectedFile);
+    
+    if (!validation.valid) {
+      setError(getFirstError(validation) || 'Invalid image file');
       return;
     }
     setFile(selectedFile);
