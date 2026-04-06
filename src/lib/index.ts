@@ -13,6 +13,11 @@ export * from './textExtraction';
 export * from './useSEO';
 export * from './pdfUtils';
 
+// Image processing
+export * from './imagePreprocessor';
+export * from './backgroundRemovalService';
+export * from './ocrService';
+
 // Security & Validation
 export * from './security';
 export * from './security/fileValidation';
